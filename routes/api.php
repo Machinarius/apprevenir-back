@@ -26,6 +26,8 @@ Route::prefix('v1')->group(function () {
 
         Route::put('/reset-password', 'Auth\PasswordController@rest')->name('reset.password.rest');
 
+        Route::post('/register', 'UserController@store')->name('register');
+
     Route::middleware('auth:api')->group(function () {
 
         // Routes users
@@ -34,7 +36,7 @@ Route::prefix('v1')->group(function () {
 
                 Route::get('/users', 'UserController@index')->name('list')->middleware('ApiPermission:users.list');
 
-                Route::post('/users', 'UserController@store')->name('create');
+                // Route::post('/users', 'UserController@store')->name('create');
 
                 Route::get('/users/{id}', 'UserController@show')->name('show');
 

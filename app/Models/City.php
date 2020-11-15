@@ -26,7 +26,7 @@ class City extends Model
 
         if ($state) {
 
-            $query->where('state_id', $country);
+            $query->where('state_id', $state);
         }
     }
 }
