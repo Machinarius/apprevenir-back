@@ -14,9 +14,9 @@ class TestController extends Controller
 {
     public function index(Request $request)
     {
-        $tests = Test::filter($request)->get();
+        $tests = Test::filter($request)->with(['categories'])->get();
 
-        return response()->json(['success' => true, 'data' => $test], 200);
+        return response()->json(['success' => true, 'data' => $tests], 200);
     }
 
     public function store(Request $request)
@@ -93,11 +93,11 @@ class TestController extends Controller
 
     public function show($id)
     {
-        $test = Test::find($id)->with(['testInformation', 
+        $test = Test::where('id', $id)->with([ 
                 'questions' => function($query) {
                     $query->with(['answers']);
                 }
-            ]);
+            ])->first();
 
         if ($test) {
 

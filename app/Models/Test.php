@@ -11,7 +11,7 @@ class Test extends Model
 {
     use SoftDeletes, SoftCascadeTrait;
 
-    protected $softCascade = ['testInformation', 'result'];
+    protected $softCascade = ['testInformations', 'results'];
 
     protected $table = 'tests';
 
@@ -30,9 +30,9 @@ class Test extends Model
         return $this->belongsTo(Test::class);
     }
 
-    public function testInformation()
+    public function testInformations()
     {
-        return $this->hasOne(TestInformation::class);
+        return $this->hasMany(TestInformation::class);
     }
 
     public function questions()
@@ -55,9 +55,9 @@ class Test extends Model
         return $this->belongsToMany(Category::class, 'category_test');
     }
 
-    public function result()
+    public function results()
     {
-        return $this->hasOne(Result::class);
+        return $this->hasMany(Result::class);
     }
 
     public function scopeFilter($query, Request $request)
@@ -82,14 +82,13 @@ class Test extends Model
             $query->where('name', $name);
         }
 
-        if (is_array($categories)) {
-            $query->whereHas('categories', function($category) use ($categories) {
-                        $category->whereIn('categories.id', $categories);
-                    });
-        }
+        if ($categories) {
 
-        $query->whereHas(['categories' => function($category){
-            $category->groupBy('name');
-        }]);
+            if (is_array($categories)) {
+                $query->whereHas('categories', function($category) use ($categories) {
+                            $category->whereIn('categories.id', $categories);
+                        });
+            }
+        }
     }
 }

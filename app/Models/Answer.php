@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Answers extends Model
+class Answer extends Model
 {
     use SoftDeletes;
 
