@@ -128,6 +128,11 @@ class UserController extends Controller
 
             unset($request['email']);
 
+            if (isset($request['password']) &&  $request['password'] == '') {
+
+                unset($request['password']);
+            }
+
             $user->update($request->all());
 
             $user->profile->update($request->all());
