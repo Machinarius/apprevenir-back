@@ -43,6 +43,8 @@ Route::prefix('v1')->group(function () {
                 Route::put('/users/{id}', 'UserController@update')->name('update');
 
                 Route::delete('/users/{id}', 'UserController@destroy')->name('destroy')->middleware('ApiPermission:users.delete');
+
+                Route::post('/users/answer', 'UserController@answer')->name('create.user.answer');
             });
 
         // Routes categories

@@ -25,6 +25,11 @@ class Answer extends Model
         return $this->belongsTo(Question::class);
     }
 
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'user_answer');
+    }
+
     public function scopeFilter($query, Request $request)
     {
         $question_id = trim($request['question_id']) != "" ? trim($request['question_id']) : NULL;

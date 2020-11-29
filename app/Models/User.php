@@ -93,6 +93,11 @@ class User extends Authenticatable
         return $this->hasMany(Result::class);
     }
 
+    public function answers()
+    {
+        return $this->belongsToMany(Answer::class, 'user_answer');
+    }
+
     public function setPasswordAttribute($value)
     {
         $this->attributes['password'] = Hash::make($value);

@@ -5,6 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Models\User;
+use App\Models\Answer;
+use App\Models\TestInformation;
+use App\Models\Result;
+use Carbon\Carbon;
 use Validator;
 use Auth;
 
@@ -45,7 +49,7 @@ class UserController extends Controller
 
         if ($validator->fails()) {
 
-        	return response()->json(['success' => false, 'errors' => $validator->errors()], 400);
+        	return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
         }
 
         $request['code'] = uniqid(Str::random(8));
@@ -100,7 +104,7 @@ class UserController extends Controller
 
         if ($validator->fails()) {
 
-        	return response()->json(['success' => false, 'errors' => $validator->errors()], 400);
+        	return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
         }
 
         if (Auth::user()->id != $id) {
@@ -157,6 +161,61 @@ class UserController extends Controller
             }
         }
         
-        return response()->json(['success' => false, 'errors' => 'User not found'], 400);
+        return response()->json(['success' => false, 'errors' => 'User not found'], 404);
     }
+
+    public function answer(Request $request)
+    { 
+        $validator = Validator::make($request->all(), [
+            'answers' => [
+                'required'
+            ],
+            'test_id' => [
+                'required'
+            ],
+        ]);
+
+        if ($validator->fails()) {
+
+        	return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
+        }
+       
+        $answers = Answer::whereIn('id', $request['answers'])->get();
+
+        $points = 0;
+        
+        if ($answers) {
+
+            foreach ($answers as $key => $answer) {
+
+                Auth::user()->answers()->attach($answer->id, ['test_id' => $request['test_id']]);
+                
+                $points += $answer->value;
+            }
+            
+            $attrInfo = [
+                ['test_id', '=', $request['test_id']],
+                ['min', '<=', $points],
+                ['max', '>=', $points]
+            ];
+            
+            $testInfo = TestInformation::where($attrInfo)->first();
+
+            $addiction = $request['addiction_id'] != NULL ? $request['addiction_id'] : $testInfo->test->addictions->first()->id;
+
+            $result = Result::create([
+                'user_id' => Auth::user()->id,
+                'test_id' => $request['test_id'],
+                'information_level_id' => $testInfo->information_level_id,
+                'addiction_id' => $addiction,
+                'date' => Carbon::today()->format('Y-m-d'),
+                'time' => Carbon::today()->format('h:m:s'),
+                'total' => $points
+            ]);
+
+            return response()->json(['success' => true, 'data' => $testInfo], 200);
+        }
+
+        return response()->json(['success' => false, 'data' => 'error answers'], 404);
+    } 
 }
