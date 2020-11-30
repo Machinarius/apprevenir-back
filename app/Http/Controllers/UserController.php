@@ -201,6 +201,8 @@ class UserController extends Controller
             
             $testInfo = TestInformation::where($attrInfo)->first();
 
+            $testInfo->resultLevel = $testInfo->informationLevel->name;
+
             $addiction = $request['addiction_id'] != NULL ? $request['addiction_id'] : $testInfo->test->addictions->first()->id;
 
             $result = Result::create([
