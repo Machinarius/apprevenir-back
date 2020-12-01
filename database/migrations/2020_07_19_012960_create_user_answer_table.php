@@ -18,6 +18,7 @@ class CreateUserAnswerTable extends Migration
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('test_id')->constrained('tests')->onDelete('cascade');
             $table->foreignId('answer_id')->constrained('answers')->onDelete('cascade');
+            $table->foreignId('result_id')->constrained('results')->onDelete('cascade');
             $table->timestamps();
         });
     }

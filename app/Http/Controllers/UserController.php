@@ -187,8 +187,6 @@ class UserController extends Controller
         if ($answers) {
 
             foreach ($answers as $key => $answer) {
-
-                Auth::user()->answers()->attach($answer->id, ['test_id' => $request['test_id']]);
                 
                 $points += $answer->value;
             }
@@ -215,9 +213,40 @@ class UserController extends Controller
                 'total' => $points
             ]);
 
+            foreach ($answers as $key => $answer) {
+
+                Auth::user()->answers()->attach($answer->id, ['test_id' => $request['test_id'], 'result_id' => $result->id]);
+            }
+
             return response()->json(['success' => true, 'data' => $testInfo], 200);
         }
 
         return response()->json(['success' => false, 'data' => 'error answers'], 404);
     } 
+
+    public function UserResults($id) 
+    {
+        if (Auth::user()->id == $id || Auth::user()->hasPermissionTo('users.results')) {
+
+            $resutls = Result::where('user_id', $id)->with(['answers' => function ($answer) {
+                $answer->with(['question']);
+            }])->get();
+        } else {
+
+            return response()->json(['success' => false, 'data' => 'user not fount'], 404);
+        }
+
+        $resutls = $resutls->map(function ($result) {
+
+            $result->testName = $result->test->name;
+
+            $result->resultLevel = $result->informationLevel->name;
+
+            $result->date = $result->created_at->format('d/m/y');
+
+            return $result;  
+        });
+
+        return response()->json(['success' => true, 'data' => $resutls], 200);
+    }
 }

@@ -44,7 +44,9 @@ Route::prefix('v1')->group(function () {
 
                 Route::delete('/users/{id}', 'UserController@destroy')->name('destroy')->middleware('ApiPermission:users.delete');
 
-                Route::post('/users/answer', 'UserController@answer')->name('create.user.answer');
+                Route::post('/users/answer', 'UserController@answer')->name('user.create.answer');
+
+                Route::get('/users/results/{id}', 'UserController@UserResults')->name('user.result');
             });
 
         // Routes categories

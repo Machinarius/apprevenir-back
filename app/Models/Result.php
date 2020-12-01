@@ -41,4 +41,9 @@ class Result extends Model
     {
         return $this->belongsTo(Addiction::class);
     }
+
+    public function answers()
+    {
+        return $this->belongsToMany(Answer::class, 'user_answer');
+    }
 }
