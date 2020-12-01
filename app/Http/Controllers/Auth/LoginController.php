@@ -51,6 +51,7 @@ class LoginController extends Controller
                     'token_type'   => 'Bearer',
                     'id' => Auth::user()->id,
                     'role' => Auth::user()->getRoleNames()->first(),
+                    'profile' => Auth::user()->profile 
                 ];
 
                 return response()->json(['success' => true, 'data' => $access], 200);
