@@ -17,6 +17,7 @@ class CreateTestAddictionTable extends Migration
             $table->id();
             $table->foreignId('test_id')->constrained('tests');
             $table->foreignId('addiction_id')->constrained('addictions');
+            $table->foreignId('test_information_id')->constrained('test_informations');
             $table->timestamps();
         });
     }

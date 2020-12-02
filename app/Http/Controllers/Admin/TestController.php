@@ -14,7 +14,9 @@ class TestController extends Controller
 {
     public function index(Request $request)
     {
-        $tests = Test::filter($request)->with(['categories'])->get();
+        $tests = Test::filter($request)->with(['categories', 'addictions' => function ($addictions) {
+            $addictions->select('name')->distinct();
+        }])->get();
 
         return response()->json(['success' => true, 'data' => $tests], 200);
     }

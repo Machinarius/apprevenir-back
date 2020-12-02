@@ -23,5 +23,10 @@ class DatabaseSeeder extends Seeder
         $this->call(AddictionsTableSeeder::class);
         $this->call(DifficultyLevelsTableSeeder::class);
         $this->call(InformationLevelTableSeeder::class);
+        $this->call(TestsTableSeeder::class);
+        $this->call(QuestionsTableSeeder::class);
+        $this->call(CategoriesTestsTableSeeder::class);
+        $this->call(TestInfoTableSeeder::class);
+        $this->call(dioTableSeeder::class);
     }
 }
