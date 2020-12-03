@@ -28,7 +28,7 @@ Route::prefix('v1')->group(function () {
 
         Route::post('/register', 'UserController@store')->name('register');
 
-    Route::middleware('auth:api')->group(function () {
+    Route::middleware(['auth:api', 'UserDisabled'])->group(function () {
 
         // Routes users
 
@@ -41,6 +41,8 @@ Route::prefix('v1')->group(function () {
                 Route::get('/users/{id}', 'UserController@show')->name('show');
 
                 Route::put('/users/{id}', 'UserController@update')->name('update');
+
+                Route::put('/users/status/{id}', 'UserController@status')->name('status')->middleware('ApiPermission:users.update');
 
                 Route::delete('/users/{id}', 'UserController@destroy')->name('destroy')->middleware('ApiPermission:users.delete');
 

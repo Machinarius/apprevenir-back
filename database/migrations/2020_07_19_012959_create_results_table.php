@@ -18,7 +18,7 @@ class CreateResultsTable extends Migration
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('test_id')->constrained('tests')->onDelete('cascade');
             $table->foreignId('information_level_id')->constrained('information_levels')->onDelete('cascade');
-            $table->foreignId('addiction_id')->constrained('addictions')->onDelete('cascade');
+            $table->foreignId('addiction_id')->nullable()->constrained('addictions')->onDelete('cascade');
             $table->date('date');
             $table->time('time');
             $table->integer('total');

@@ -65,7 +65,7 @@ class Test extends Model
         $lang = trim($request['lang']) != "" ? trim($request['lang']) : NULL;
         $name = trim($request['name']) != "" ? trim($request['name']) : NULL;
         $categories = trim($request['categories']) != "" ? trim($request['categories']) : NULL;
-        $status = trim($request['status']) != "" ? $request['status']  === 'true' || $request['status']  === 1  ? true : false : NULL;
+        $status = trim($request['status']) != "" ? $request['status']  == 'true' || $request['status']  == 1  ? true : false : NULL;
 
         if (isset($status)) {
 

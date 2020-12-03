@@ -132,6 +132,8 @@ class UserController extends Controller
 
             unset($request['email']);
 
+            unset($request['status']);
+
             if (isset($request['password']) &&  $request['password'] == '') {
 
                 unset($request['password']);
@@ -145,6 +147,35 @@ class UserController extends Controller
         }
 
         return response()->json(['success' => false, 'errors' => 'User not found'], 404);
+    }
+
+    public function status(Request $request, $id)
+    {
+        $validator = Validator::make($request->all(), [
+            'status' => [
+                'required'
+            ],
+        ]);
+
+        if ($validator->fails()) {
+
+        	return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
+        }
+
+        $user = User::find($id);
+
+        if ($user->hasRole('root')) {
+
+            return response()->json(['success' => false, 'errors' => 'Forbidden'], 403);
+        }
+
+        $user->update([
+            'status' => $request['status']
+        ]);
+
+        $msg = $request['status'] == 0 ? 'user disabled' : 'user enabled';
+
+        return response()->json(['success' => false, 'data' => $msg], 200);
     }
 
     public function destroy($id)
@@ -201,7 +232,7 @@ class UserController extends Controller
 
             $testInfo->resultLevel = $testInfo->informationLevel->name;
 
-            $addiction = $request['addiction_id'] != NULL ? $request['addiction_id'] : $testInfo->test->addictions->first()->id;
+            $addiction = $request['addiction_id'] != NULL ? $request['addiction_id'] : NULL;
 
             $result = Result::create([
                 'user_id' => Auth::user()->id,

@@ -32,7 +32,7 @@ class LoginController extends Controller
 
             if ($user->status == 0) {
 
-                return response()->json(['success' => false, 'data' => 'User not active'], 200);
+                return response()->json(['success' => false, 'data' => 'Usuario inactivo'], 400);
             }
 
             $login = $request->only('email', 'password');
