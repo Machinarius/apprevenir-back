@@ -95,11 +95,11 @@ class TestController extends Controller
 
     public function show($id)
     {
-        $test = Test::where('id', $id)->with([ 
-                'questions' => function($query) {
+        $test = Test::where('id', $id)->with(['questions' => function($query) {
                     $query->with(['answers']);
-                }
-            ])->first();
+                }, 'addictions' => function ($addictions) {
+                    $addictions->select('name')->distinct();
+                }])->first();
 
         if ($test) {
 
