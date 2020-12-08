@@ -61,7 +61,7 @@ class LoginController extends Controller
             }
         } else {
 
-            return response()->json(['success' => false, 'data' => 'Not found'], 404);
+            return response()->json(['success' => false, 'data' => 'Usuario no registrado'], 404);
         }
     }
 
