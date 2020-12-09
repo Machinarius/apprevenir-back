@@ -17,7 +17,15 @@ class TestController extends Controller
     {
         $tests = Test::filter($request)->with(['categories', 'addictions' => function ($addictions) {
             $addictions->select('name')->distinct();
-        }])->get();
+        }])->get()->map(function ($test) {
+
+            if ($test->image != '') {
+
+                $test->svg = explode('.', $test->image)[0];
+            }
+    
+            return $test;
+        });
 
         return response()->json(['success' => true, 'data' => $tests], 200);
     }
