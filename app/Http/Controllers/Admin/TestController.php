@@ -17,15 +17,7 @@ class TestController extends Controller
     {
         $tests = Test::filter($request)->with(['categories', 'addictions' => function ($addictions) {
             $addictions->select('name')->distinct();
-        }])->get()->map(function ($test) {
-
-            if ($test->image != '') {
-
-                $test->svg = explode('.', $test->image)[0];
-            }
-    
-            return $test;
-        });
+        }])->get();
 
         return response()->json(['success' => true, 'data' => $tests], 200);
     }
@@ -276,6 +268,6 @@ class TestController extends Controller
     {
         $image = Storage::disk('public')->get('images/'.$filename);
 
-        return response()->json(['image' => $image]);
+        return $image;
     }
 }
