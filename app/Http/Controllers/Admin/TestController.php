@@ -9,6 +9,7 @@ use App\Models\Answer;
 use App\Models\TestInformation;
 use Validator;
 use Auth;
+use Storage;
 
 class TestController extends Controller
 {
@@ -261,5 +262,12 @@ class TestController extends Controller
 
             return response()->json(['success' => false, 'errors' => 'Test not found'], 404);
         }
+    }
+
+    public function image($filename)
+    {
+        $image = Storage::disk('public')->get('images/'.$filename);
+
+        return response()->json(['image' => $image]);
     }
 }
