@@ -18,9 +18,9 @@ class CreateTestInformationsTable extends Migration
             $table->foreignId('test_id')->constrained('tests')->onDelete('cascade');
             $table->foreignId('information_level_id')->constrained('information_levels')->onDelete('cascade');
             $table->foreignId('difficulty_level_id')->constrained('difficulty_levels')->onDelete('cascade');
-            $table->string('url_video');
-            $table->text('professional_help');
-            $table->string('url_interest');
+            $table->string('url_video')->nullable();
+            $table->text('professional_help')->nullable();
+            $table->text('url_interest')->nullable();
             $table->integer('min');
             $table->integer('max');
             $table->timestamps();
