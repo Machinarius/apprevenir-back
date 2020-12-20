@@ -261,7 +261,7 @@ class UserController extends Controller
 
             $resutls = Result::where('user_id', $id)->with(['answers' => function ($answer) {
                 $answer->with(['question']);
-            }])->get();
+            }, 'addiction'])->get();
         } else {
 
             return response()->json(['success' => false, 'data' => 'user not fount'], 404);
