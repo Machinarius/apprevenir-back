@@ -27,6 +27,48 @@ class UserController extends Controller
         return response()->json(['success' => true, 'data' => $users], 200);
     }
 
+    public function clients(Request $request)
+    {
+        $clients = User::where('client', $request['client'])->with(['profile']);
+        
+        switch ($request['client']) {
+            case 'entidades territoriales':
+                $clients->with(['zones' => function($zones){
+                    $zones->with(['communes' => function($communes) {
+                        $communes->with(['neighborhoods']);
+                    }]);
+                }]);
+                break;
+            case 'secretarias de educacion':
+                $clients->with(['educationalInstitutions' => function($educationals){
+                    $educationals->with(['grades']);
+                }]);
+                break;
+            case 'instituciones educativas':
+                $clients->with(['educationalGrades']);
+                break;
+            case 'universidades':
+                $clients->with(['programs' => function($programs){
+                    $programs->with(['modalities' => function($modalities) {
+                        $modalities->with(['semesters']);
+                    }]);
+                }]);
+                break;
+            case 'empresas':
+                $clients->with(['locations' => function($locations){
+                    $locations->with(['areas' => function($areas) {
+                        $areas->with(['schedules']);
+                    }]);
+                }]);
+                break;
+            default:
+                $clients;
+                break;
+        }
+        
+        return response()->json(['success' => true, 'data' => $clients->get()], 200);
+    }
+
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -53,6 +95,16 @@ class UserController extends Controller
         }
 
         $request['code'] = uniqid(Str::random(8));
+
+        if (isset($request['client_config'])) {
+            
+            $request['client_config'] = json_encode($request['client_config']);
+        }
+
+        if (!isset($request['client'])) {
+
+            $request['client'] = 'persona natual';
+        }
 
         $user = User::create($request->all());
 

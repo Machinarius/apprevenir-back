@@ -356,4 +356,6 @@ Route::prefix('v1')->group(function () {
     Route::get('/states', 'CountryController@states')->name('states.list');
 
     Route::get('/cities', 'CountryController@cities')->name('cities.list');
+
+    Route::get('/clients', 'UserController@clients')->name('client.list');
 });
