@@ -47,6 +47,20 @@ class InformationLevelTableSeeder extends Seeder
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s'),
             ],
+            [
+                'id' => 6,
+                'name' => 'Ausencia de Ansiedad', 
+                'lang' => 'es',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ],
+            [
+                'id' => 7,
+                'name' => 'Presencia de Ansiedad', 
+                'lang' => 'es',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ],
         ]);
     }
 }

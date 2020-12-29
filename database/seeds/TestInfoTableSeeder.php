@@ -1223,7 +1223,7 @@ class TestInfoTableSeeder extends Seeder
             [
                 'id' => 58,
                 'test_id' => 12, 
-                'information_level_id' => '4',
+                'information_level_id' => '6',
                 'difficulty_level_id' => '1',
                 'url_video' => '7c1aVLf33bY',
                 'professional_help' => '',
@@ -1241,7 +1241,7 @@ class TestInfoTableSeeder extends Seeder
             [
                 'id' => 59,
                 'test_id' => 12, 
-                'information_level_id' => '5',
+                'information_level_id' => '7',
                 'difficulty_level_id' => '2',
                 'url_video' => 'PgPV4QQzZ88',
                 'professional_help' => '',
