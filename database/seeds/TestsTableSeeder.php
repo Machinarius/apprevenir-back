@@ -166,7 +166,7 @@ class TestsTableSeeder extends Seeder
                 'test_id' => NULL, 
                 'lang' => 'es',
                 'name' => 'Tecnologías',
-                'image' => 'TECNOLOGIAS.png',
+                'image' => 'TECNOLOGIA.png',
                 'introduction' => '',
                 'description' => '',
                 'status' => 1,
