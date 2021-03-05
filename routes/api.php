@@ -49,6 +49,8 @@ Route::prefix('v1')->group(function () {
                 Route::post('/users/answer', 'UserController@answer')->name('user.create.answer');
 
                 Route::get('/users/results/{id}', 'UserController@UserResults')->name('user.result');
+
+                Route::get('/results/all', 'UserController@getAllUsersResults')->name('users.results')->middleware('ApiPermission:users.results');
             });
 
         // Routes categories

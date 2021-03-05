@@ -332,4 +332,26 @@ class UserController extends Controller
 
         return response()->json(['success' => true, 'data' => $resutls], 200);
     }
+
+    public function getAllUsersResults()
+    {
+        $resutls = Result::whereNotNull('id')->with(['user.profile', 'answers' => function ($answer) {
+            $answer->with(['question']);
+        }, 'addiction'])->get();
+
+        $resutls = $resutls->map(function ($result) {
+
+            $result->testName = $result->test->name;
+
+            $result->resultLevel = $result->informationLevel->name;
+
+            $result->date = $result->created_at->format('d/m/y');
+
+            $result->user->profile->city;
+
+            return $result;  
+        });
+
+        return response()->json(['success' => true, 'data' => $resutls], 200); 
+    }
 }
