@@ -18,10 +18,10 @@ class UserController extends Controller
     {
         if (Auth::user()->hasRole('root') || Auth::user()->hasRole('admin')) {
 
-            $users = User::filter($request)->get();
+            $users = User::filter($request)->with(['profile'])->get();
         } else {
 
-            $users = User::where('reference', Auth::user()->id)->filter($request)->get();
+            $users = User::where('reference', Auth::user()->id)->with(['profile'])->filter($request)->get();
         }
         
         return response()->json(['success' => true, 'data' => $users], 200);
