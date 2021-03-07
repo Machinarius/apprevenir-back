@@ -135,7 +135,7 @@ class UserController extends Controller
             $user = User::where('id', $id)->with(['profile'])->first();
         }
 
-        if ($user) {
+        if (isset($user)) {
 
             return response()->json(['success' => true, 'data' => $user], 200);
         }
