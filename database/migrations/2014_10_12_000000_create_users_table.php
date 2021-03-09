@@ -19,7 +19,7 @@ class CreateUsersTable extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->enum('client', ['persona natual', 'entidades territoriales', 'secretarias de educacion', 'instituciones educativas', 'universidades', 'empresas'])->default('persona natual');
+            $table->enum('client', ['persona natural', 'entidades territoriales', 'secretarias de educacion', 'instituciones educativas', 'universidades', 'empresas'])->default('persona natural');
             $table->boolean('status')->default(1);
             $table->string('code');
             $table->rememberToken();

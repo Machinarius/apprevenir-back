@@ -19,7 +19,7 @@ class GradeController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'educational_institution_id' => [
+            'user_id' => [
                 'required',
             ],
             'grade' => [
@@ -52,7 +52,7 @@ class GradeController extends Controller
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'educational_institution_id' => [
+            'user_id' => [
                 'required',
             ],
             'grade' => [

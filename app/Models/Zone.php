@@ -11,8 +11,6 @@ class Zone extends Model
 {
     use SoftDeletes, SoftCascadeTrait;
 
-    protected $softCascade = ['communes'];
-
     protected $table = 'zones';
 
     protected $fillable = [
@@ -23,11 +21,6 @@ class Zone extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
-    }
-
-    public function communes()
-    {
-        return $this->hasMany(Commune::class);
     }
 
     public function scopeFilter($query, Request $request)

@@ -23,7 +23,7 @@ class CreateUniversitiesTable extends Migration
 
         Schema::create('modalities', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('program_id')->constrained('programs')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->string('modality');
             $table->timestamps();
             $table->softDeletes('deleted_at', 0);
@@ -31,8 +31,7 @@ class CreateUniversitiesTable extends Migration
 
         Schema::create('semesters', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('modality_id')->constrained('modalities')->onDelete('cascade');
-            $table->string('semester');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->timestamps();
             $table->softDeletes('deleted_at', 0);
         });

@@ -23,7 +23,7 @@ class CreateTerritorialEntitysTable extends Migration
 
         Schema::create('communes', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('zone_id')->constrained('zones')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->string('commune');
             $table->timestamps();
             $table->softDeletes('deleted_at', 0);
@@ -31,7 +31,7 @@ class CreateTerritorialEntitysTable extends Migration
 
         Schema::create('neighborhoods', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('commune_id')->constrained('communes')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->string('neighborhood');
             $table->timestamps();
             $table->softDeletes('deleted_at', 0);

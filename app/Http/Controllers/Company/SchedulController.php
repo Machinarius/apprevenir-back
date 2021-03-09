@@ -19,7 +19,7 @@ class SchedulController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'area_id' => [
+            'user_id' => [
                 'required',
             ],
             'schedul' => [
@@ -52,7 +52,7 @@ class SchedulController extends Controller
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'area_id' => [
+            'user_id' => [
                 'required',
             ],
             'schedul' => [

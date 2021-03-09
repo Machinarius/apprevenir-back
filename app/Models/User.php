@@ -18,11 +18,18 @@ class User extends Authenticatable
 
     protected $softCascade = [
         'profile', 
-        'zones', 
-        'programs', 
-        'educationalInstitutions', 
-        'educationalGrades', 
-        'locations',
+        'areas',
+        'loccations',
+        'schedules',
+        'educationalGrades',
+        'educationalInstitutions',
+        'grades',
+        'communes',
+        'neighborhoods',
+        'zones',
+        'modalities',
+        'programs',
+        'semesters',
         'results'
     ];
 
@@ -63,19 +70,19 @@ class User extends Authenticatable
         return $this->hasOne(Profile::class);
     }
 
-    public function zones()
+    public function areas()
     {
-        return $this->hasMany(Zone::class);
+        return $this->hasMany(Area::class);
     }
 
-    public function programs()
+    public function locations()
     {
-        return $this->hasMany(Program::class);
+        return $this->hasMany(Location::class);
     }
 
-    public function educationalInstitutions()
+    public function schedules()
     {
-        return $this->hasMany(EducationalInstitution::class);
+        return $this->hasMany(Schedul::class);
     }
 
     public function educationalGrades()
@@ -83,9 +90,44 @@ class User extends Authenticatable
         return $this->hasMany(EducationalGrade::class);
     }
 
-    public function locations()
+    public function educationalInstitutions()
     {
-        return $this->hasMany(Location::class);
+        return $this->hasMany(EducationalInstitution::class);
+    }
+
+    public function grades()
+    {
+        return $this->hasMany(Grade::class);
+    }
+
+    public function communes()
+    {
+        return $this->hasMany(Commune::class);
+    }
+
+    public function neighborhoods()
+    {
+        return $this->hasMany(Neighborhood::class);
+    }
+
+    public function zones()
+    {
+        return $this->hasMany(Zone::class);
+    }
+
+    public function modalities()
+    {
+        return $this->hasMany(Modality::class);
+    }
+
+    public function programs()
+    {
+        return $this->hasMany(Program::class);
+    }
+
+    public function semesters()
+    {
+        return $this->hasMany(Semester::class);
     }
 
     public function results()

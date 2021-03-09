@@ -13,22 +13,22 @@ class Schedul extends Model
     protected $table = 'schedules';
 
     protected $fillable = [
-        'area_id',
+        'user_id',
         'schedul', 
     ];
 
-    public function area()
+    public function user()
     {
-        return $this->belongsTo(Area::class);
+        return $this->belongsTo(User::class);
     }
 
     public function scopeFilter($query, Request $request)
     {
-        $area_id = trim($request['area_id']) != "" ? trim($request['area_id']) : NULL;
+        $user_id = trim($request['user_id']) != "" ? trim($request['user_id']) : NULL;
         
-        if ($area_id) {
+        if ($user_id) {
 
-            $query->where('area_id', $area_id);
+            $query->where('user_id', $user_id);
         }
     }
 }

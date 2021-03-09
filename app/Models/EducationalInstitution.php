@@ -11,8 +11,6 @@ class EducationalInstitution extends Model
 {
     use SoftDeletes, SoftCascadeTrait;
 
-    protected $softCascade = ['grades'];
-
     protected $table = 'educational_institutions';
 
     protected $fillable = [
@@ -23,11 +21,6 @@ class EducationalInstitution extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
-    }
-
-    public function grades()
-    {
-        return $this->hasMany(Grade::class);
     }
 
     public function scopeFilter($query, Request $request)

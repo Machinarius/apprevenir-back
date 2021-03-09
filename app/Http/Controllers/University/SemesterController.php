@@ -19,7 +19,7 @@ class SemesterController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'modality_id' => [
+            'user_id' => [
                 'required',
             ],
             'semester' => [
@@ -52,7 +52,7 @@ class SemesterController extends Controller
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'modality_id' => [
+            'user_id' => [
                 'required',
             ],
             'semester' => [

@@ -32,6 +32,7 @@ class UsersTableSeeder extends Seeder
             'user_id' => 1,
             'first_names' => 'Usuario Apprevenir',
             'last_names' => 'Root',
+            'last_names_two' => 'Root 2',
             'phone' => '123456789',
             'birthday' => date('Y-m-d'),
             'is_student' => 0
