@@ -72,7 +72,7 @@ class UsersTableSeeder extends Seeder
 
         DB::table('communes')->insert([
             'id' => 1,
-            'zone_id' => 1,
+            'user_id' => 2,
             'commune' => 'El Poblado',
             'created_at' => now(),
             'updated_at' => now()
@@ -80,7 +80,7 @@ class UsersTableSeeder extends Seeder
 
         DB::table('neighborhoods')->insert([
             'id' => 1,
-            'commune_id' => 1,
+            'user_id' => 2,
             'neighborhood' => 'Colombia',
             'created_at' => now(),
             'updated_at' => now()
@@ -120,7 +120,7 @@ class UsersTableSeeder extends Seeder
 
         DB::table('grades')->insert([
             'id' => 1,
-            'educational_institution_id' => 1,
+            'user_id' => 3,
             'grade' => 'Once',
             'created_at' => now(),
             'updated_at' => now()
@@ -191,7 +191,7 @@ class UsersTableSeeder extends Seeder
 
         DB::table('modalities')->insert([
             'id' => 1,
-            'program_id' => 1,
+            'user_id' => 5,
             'modality' => 'Presencial',
             'created_at' => now(),
             'updated_at' => now()
@@ -199,7 +199,7 @@ class UsersTableSeeder extends Seeder
 
         DB::table('semesters')->insert([
             'id' => 1,
-            'modality_id' => 1,
+            'user_id' => 5,
             'semester' => 'Primero',
             'created_at' => now(),
             'updated_at' => now()
@@ -239,14 +239,14 @@ class UsersTableSeeder extends Seeder
 
         DB::table('areas')->insert([
             'id' => 1,
-            'location_id' => 1,
+            'user_id' => 6,
             'area' => 'Edificio Inteligente',
             'created_at' => now(),
             'updated_at' => now()
         ]);
 
         DB::table('schedules')->insert([
-            'area_id' => 1,
+            'user_id' => 6,
             'schedul' => '8am - 5pm',
             'created_at' => now(),
             'updated_at' => now()
