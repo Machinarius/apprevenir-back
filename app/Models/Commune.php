@@ -11,32 +11,25 @@ class Commune extends Model
 {
     use SoftDeletes, SoftCascadeTrait;
 
-    protected $softCascade = ['neighborhoods'];
-
     protected $table = 'communes';
 
     protected $fillable = [
-        'zone_id',
+        'user_id',
         'commune', 
     ];
 
-    public function zone()
+    public function user()
     {
-        return $this->belongsTo(Zone::class);
-    }
-
-    public function neighborhoods()
-    {
-        return $this->hasMany(Neighborhood::class);
+        return $this->belongsTo(User::class);
     }
 
     public function scopeFilter($query, Request $request)
     {
-        $zone_id = trim($request['zone_id']) != "" ? trim($request['zone_id']) : NULL;
+        $user_id = trim($request['user_id']) != "" ? trim($request['user_id']) : NULL;
         
-        if ($zone_id) {
+        if ($user_id) {
 
-            $query->where('zone_id', $zone_id);
+            $query->where('user_id', $user_id);
         }
     }
 }

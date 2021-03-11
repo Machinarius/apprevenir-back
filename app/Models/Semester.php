@@ -13,22 +13,22 @@ class Semester extends Model
     protected $table = 'semesters';
 
     protected $fillable = [
-        'modality_id',
+        'user_id',
         'semester', 
     ];
 
-    public function modality()
+    public function user()
     {
-        return $this->belongsTo(Modality::class);
+        return $this->belongsTo(User::class);
     }
 
     public function scopeFilter($query, Request $request)
     {
-        $modality_id = trim($request['modality_id']) != "" ? trim($request['modality_id']) : NULL;
+        $user_id = trim($request['user_id']) != "" ? trim($request['user_id']) : NULL;
         
-        if ($modality_id) {
+        if ($user_id) {
 
-            $query->where('modality_id', $modality_id);
+            $query->where('user_id', $user_id);
         }
     }
 }

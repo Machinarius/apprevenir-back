@@ -13,22 +13,22 @@ class Neighborhood extends Model
     protected $table = 'neighborhoods';
 
     protected $fillable = [
-        'commune_id',
+        'user_id',
         'neighborhood', 
     ];
 
-    public function commune()
+    public function user()
     {
-        return $this->belongsTo(Commune::class);
+        return $this->belongsTo(User::class);
     }
 
     public function scopeFilter($query, Request $request)
     {
-        $commune_id = trim($request['commune_id']) != "" ? trim($request['commune_id']) : NULL;
+        $user_id = trim($request['user_id']) != "" ? trim($request['user_id']) : NULL;
         
-        if ($commune_id) {
+        if ($user_id) {
 
-            $query->where('commune_id', $commune_id);
+            $query->where('user_id', $user_id);
         }
     }
 }

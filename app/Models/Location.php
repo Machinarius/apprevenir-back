@@ -11,8 +11,6 @@ class Location extends Model
 {
     use SoftDeletes, SoftCascadeTrait;
 
-    protected $softCascade = ['areas'];
-
     protected $table = 'locations';
 
     protected $fillable = [
@@ -23,11 +21,6 @@ class Location extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
-    }
-
-    public function areas()
-    {
-        return $this->hasMany(Area::class);
     }
 
     public function scopeFilter($query, Request $request)

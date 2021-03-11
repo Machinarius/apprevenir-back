@@ -11,32 +11,25 @@ class Modality extends Model
 {
     use SoftDeletes, SoftCascadeTrait;
 
-    protected $softCascade = ['semesters'];
-
     protected $table = 'modalities';
 
     protected $fillable = [
-        'program_id',
+        'user_id',
         'modality', 
     ];
 
-    public function program()
+    public function user()
     {
-        return $this->belongsTo(Program::class);
-    }
-
-    public function semesters()
-    {
-        return $this->hasMany(Semester::class);
+        return $this->belongsTo(User::class);
     }
 
     public function scopeFilter($query, Request $request)
     {
-        $program_id = trim($request['program_id']) != "" ? trim($request['program_id']) : NULL;
+        $user_id = trim($request['user_id']) != "" ? trim($request['user_id']) : NULL;
         
-        if ($program_id) {
+        if ($user_id) {
 
-            $query->where('program_id', $program_id);
+            $query->where('user_id', $user_id);
         }
     }
 }

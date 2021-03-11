@@ -23,7 +23,7 @@ class CreateEducationSecretariatsTable extends Migration
 
         Schema::create('grades', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('educational_institution_id')->constrained('educational_institutions')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->string('grade');
             $table->timestamps();
             $table->softDeletes('deleted_at', 0);

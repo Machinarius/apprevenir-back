@@ -13,22 +13,22 @@ class Grade extends Model
     protected $table = 'grades';
 
     protected $fillable = [
-        'educational_institution_id',
+        'user_id',
         'grade', 
     ];
 
-    public function educationalInstitution()
+    public function user()
     {
-        return $this->belongsTo(EducationalInstitution::class);
+        return $this->belongsTo(User::class);
     }
 
     public function scopeFilter($query, Request $request)
     {
-        $educational_institution_id = trim($request['educational_institution_id']) != "" ? trim($request['educational_institution_id']) : NULL;
+        $user_id = trim($request['user_id']) != "" ? trim($request['user_id']) : NULL;
         
-        if ($educational_institution_id) {
+        if ($user_id) {
 
-            $query->where('educational_institution_id', $educational_institution_id);
+            $query->where('user_id', $user_id);
         }
     }
 }

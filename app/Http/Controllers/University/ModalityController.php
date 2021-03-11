@@ -19,7 +19,7 @@ class ModalityController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'program_id' => [
+            'user_id' => [
                 'required',
             ],
             'modality' => [
@@ -52,7 +52,7 @@ class ModalityController extends Controller
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'program_id' => [
+            'user_id' => [
                 'required',
             ],
             'modality' => [

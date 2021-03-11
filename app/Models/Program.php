@@ -25,11 +25,6 @@ class Program extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function modalities()
-    {
-        return $this->hasMany(Modality::class);
-    }
-
     public function scopeFilter($query, Request $request)
     {
         $user_id = trim($request['user_id']) != "" ? trim($request['user_id']) : NULL;

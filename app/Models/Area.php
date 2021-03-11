@@ -11,32 +11,25 @@ class Area extends Model
 {
     use SoftDeletes, SoftCascadeTrait;
 
-    protected $softCascade = ['schedules'];
-
     protected $table = 'areas';
 
     protected $fillable = [
-        'location_id',
+        'user_id',
         'area', 
     ];
 
-    public function location()
+    public function user()
     {
-        return $this->belongsTo(Location::class);
-    }
-
-    public function schedules()
-    {
-        return $this->hasMany(Schedul::class);
+        return $this->belongsTo(User::class);
     }
 
     public function scopeFilter($query, Request $request)
     {
-        $location_id = trim($request['location_id']) != "" ? trim($request['location_id']) : NULL;
+        $user_id = trim($request['user_id']) != "" ? trim($request['user_id']) : NULL;
         
-        if ($location_id) {
+        if ($user_id) {
 
-            $query->where('location_id', $location_id);
+            $query->where('user_id', $user_id);
         }
     }
 }

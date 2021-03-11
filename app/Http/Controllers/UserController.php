@@ -29,44 +29,54 @@ class UserController extends Controller
 
     public function clients(Request $request)
     {
-        $clients = User::where('client', $request['client'])->with(['profile']);
+        $clients = User::where('client', $request['client'])->with(['profile'])->get()->map(function($user) {
+
+            switch ($user['client']) {
+                case 'entidades territoriales':
+                    $user->clientTypeConfig = [
+                        'zones' => $user->zones,
+                        'communes' => $user->communes,
+                        'neighborhoods' => $user->neighborhoods
+                    ];
+                    break;
+                case 'secretarias de educacion':
+                    $user->clientTypeConfig = [
+                        'educationalInstitutions' => $user->educationalInstitutions,
+                        'grades' => $user->grades
+                    ];
+                    break;
+                case 'instituciones educativas':
+                    $user->clientTypeConfig = [
+                        'educationalGrades' => $user->educationalGrades
+                    ];
+                    break;
+                case 'universidades':
+                    $user->clientTypeConfig = [
+                        'programs' => $user->programs,
+                        'modalities' => $user->modalities,
+                        'semesters' => $user->semesters
+                    ];
+                    break;
+                case 'empresas':
+                    $user->clientTypeConfig = [
+                        'locations' => $user->locations,
+                        'areas' => $user->areas,
+                        'schedules' => $user->schedules,
+                    ];
+                    break;
+                default:
+                    $user;
+                    break;
+            }
+
+            $user = $this->formarUser($user);
+
+            return $user;
+        });
         
-        switch ($request['client']) {
-            case 'entidades territoriales':
-                $clients->with(['zones' => function($zones){
-                    $zones->with(['communes' => function($communes) {
-                        $communes->with(['neighborhoods']);
-                    }]);
-                }]);
-                break;
-            case 'secretarias de educacion':
-                $clients->with(['educationalInstitutions' => function($educationals){
-                    $educationals->with(['grades']);
-                }]);
-                break;
-            case 'instituciones educativas':
-                $clients->with(['educationalGrades']);
-                break;
-            case 'universidades':
-                $clients->with(['programs' => function($programs){
-                    $programs->with(['modalities' => function($modalities) {
-                        $modalities->with(['semesters']);
-                    }]);
-                }]);
-                break;
-            case 'empresas':
-                $clients->with(['locations' => function($locations){
-                    $locations->with(['areas' => function($areas) {
-                        $areas->with(['schedules']);
-                    }]);
-                }]);
-                break;
-            default:
-                $clients;
-                break;
-        }
         
-        return response()->json(['success' => true, 'data' => $clients->get()], 200);
+        
+        return response()->json(['success' => true, 'data' => $clients], 200);
     }
 
     public function store(Request $request)
@@ -79,6 +89,9 @@ class UserController extends Controller
                 'required'
             ],
             'last_names' => [
+                'required'
+            ],
+            'last_names_two' => [
                 'required'
             ],
             'password' => [
@@ -150,6 +163,9 @@ class UserController extends Controller
                 'required'
             ],
             'last_names' => [
+                'required'
+            ],
+            'last_names_two' => [
                 'required'
             ],
         ]);
@@ -353,5 +369,30 @@ class UserController extends Controller
         });
 
         return response()->json(['success' => true, 'data' => $resutls], 200); 
+    }
+
+    private function formarUser($user) 
+    {
+        $attrRemoves = [
+            'zones',
+            'communes',
+            'neighborhoods',
+            'educationalInstitutions',
+            'grades',
+            'educationalGrades',
+            'programs',
+            'modalities',
+            'semesters',
+            'locations',
+            'areas',
+            'schedules',
+        ];
+
+        foreach ($attrRemoves as $remove) {
+
+            unset($user[$remove]);
+        }
+
+        return $user;
     }
 }
