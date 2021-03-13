@@ -12,12 +12,18 @@ class Commune extends Model
     use SoftDeletes, SoftCascadeTrait;
 
     protected $table = 'communes';
+    protected $softCascade = ['neighborhoods'];
 
     protected $fillable = [
         'user_id',
         'commune', 
         'zone_type'
     ];
+
+    public function neighborhoods()
+    {
+        return $this->hasMany(Neighborhood::class);
+    }
 
     public function user()
     {
