@@ -99,7 +99,7 @@ class TestController extends Controller
         $test = Test::where('id', $id)->with(['questions' => function($query) {
                     $query->with(['answers']);
                 }, 'addictions' => function ($addictions) {
-                    $addictions->select('name')->distinct();
+                    $addictions->distinct();
                 }])->first();
 
         if ($test) {

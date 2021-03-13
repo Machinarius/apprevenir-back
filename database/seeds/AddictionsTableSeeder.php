@@ -27,7 +27,7 @@ class AddictionsTableSeeder extends Seeder
                 'name' => 'Cocaina', 
                 'lang' => 'es',
                 'description' => '
-                    Cannabis (marihuana, cripa, hierba, hashish, etc.) 
+                    Cocaina (coca, perico, crack, base, etc.) 
                 ',
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s'),
