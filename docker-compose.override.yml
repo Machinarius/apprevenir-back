@@ -9,8 +9,7 @@ services:
     image: mysql:8
     ports:
       - "3306:3306"
-    environment:
-      env_file: .db.env
+    env_file: .db.env
     volumes:
       - db-data:/var/lib/mysql
 
