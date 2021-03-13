@@ -26,7 +26,6 @@ class User extends Authenticatable
         'grades',
         'communes',
         'neighborhoods',
-        'zones',
         'modalities',
         'programs',
         'semesters',

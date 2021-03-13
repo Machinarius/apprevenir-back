@@ -34,9 +34,7 @@ class UserController extends Controller
             switch ($user['client']) {
                 case 'entidades territoriales':
                     $user->clientTypeConfig = [
-                        'zones' => $user->zones,
-                        'communes' => $user->communes,
-                        'neighborhoods' => $user->neighborhoods
+                        'communes' => Commune::where('user', $user)->with(['neighborhood'])
                     ];
                     break;
                 case 'secretarias de educacion':
@@ -63,9 +61,6 @@ class UserController extends Controller
                         'areas' => $user->areas,
                         'schedules' => $user->schedules,
                     ];
-                    break;
-                default:
-                    $user;
                     break;
             }
 

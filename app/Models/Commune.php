@@ -16,6 +16,7 @@ class Commune extends Model
     protected $fillable = [
         'user_id',
         'commune', 
+        'zone_type'
     ];
 
     public function user()

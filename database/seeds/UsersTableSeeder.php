@@ -62,26 +62,36 @@ class UsersTableSeeder extends Seeder
             'is_student' => 0
         ]);
 
-        DB::table('zones')->insert([
-            'id' => 1,
-            'user_id' => 2,
-            'zone' => 'Medellín',
-            'created_at' => now(),
-            'updated_at' => now()
-        ]);
-
         DB::table('communes')->insert([
             'id' => 1,
             'user_id' => 2,
             'commune' => 'El Poblado',
+            'zone_type' => 'urbana',
             'created_at' => now(),
             'updated_at' => now()
         ]);
 
         DB::table('neighborhoods')->insert([
             'id' => 1,
-            'user_id' => 2,
+            'commune_id' => 1,
             'neighborhood' => 'Colombia',
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+
+        DB::table('communes')->insert([
+            'id' => 2,
+            'user_id' => 2,
+            'commune' => 'San Cristobal',
+            'zone_type' => 'rural',
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+
+        DB::table('neighborhoods')->insert([
+            'id' => 2,
+            'commune_id' => 2,
+            'neighborhood' => 'Pedregal',
             'created_at' => now(),
             'updated_at' => now()
         ]);
