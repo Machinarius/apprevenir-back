@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Answer;
 use App\Models\TestInformation;
 use App\Models\Result;
+use App\Models\Commune;
 use Carbon\Carbon;
 use Validator;
 use Auth;
@@ -33,10 +34,12 @@ class UserController extends Controller
 
             switch ($user['client']) {
                 case 'entidades territoriales':
+                    $allCommunes = function ($user) { return Commune::where('user_id', $user['id'])->with(['neighborhoods']); };
                     $user->clientTypeConfig = [
-                        'zones' => $user->zones,
-                        'communes' => $user->communes,
-                        'neighborhoods' => $user->neighborhoods
+                        'communes' => [
+                            'urbana' => $allCommunes($user)->where('zone_type', 'urbana')->get(),
+                            'rural' => $allCommunes($user)->where('zone_type', 'rural')->get()
+                        ]
                     ];
                     break;
                 case 'secretarias de educacion':
@@ -63,9 +66,6 @@ class UserController extends Controller
                         'areas' => $user->areas,
                         'schedules' => $user->schedules,
                     ];
-                    break;
-                default:
-                    $user;
                     break;
             }
 
