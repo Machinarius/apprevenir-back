@@ -37,7 +37,7 @@ class UserController extends Controller
                     $allCommunes = function ($user) { return Commune::where('user_id', $user['id'])->with(['neighborhoods']); };
                     $user->clientTypeConfig = [
                         'communes' => [
-                            'urban' => $allCommunes($user)->where('zone_type', 'urbana')->get(),
+                            'urbana' => $allCommunes($user)->where('zone_type', 'urbana')->get(),
                             'rural' => $allCommunes($user)->where('zone_type', 'rural')->get()
                         ]
                     ];
