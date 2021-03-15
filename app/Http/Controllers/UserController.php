@@ -18,12 +18,21 @@ class UserController extends Controller
     {
         if (Auth::user()->hasRole('root') || Auth::user()->hasRole('admin')) {
 
-            $users = User::filter($request)->with(['profile'])->get();
+            $users = User::filter($request)->with(['profile'])->get()->map(function ($user) {
+
+                if (!$user->hasRole('admin') && !$user->hasRole('root')) {
+
+                    return $user;
+                }
+            });
+
+            $users = array_values($users->reject(null)->toArray());
+
         } else {
 
             $users = User::where('reference', Auth::user()->id)->with(['profile'])->filter($request)->get();
         }
-        
+
         return response()->json(['success' => true, 'data' => $users], 200);
     }
 
@@ -112,11 +121,6 @@ class UserController extends Controller
         if (isset($request['client_config'])) {
             
             $request['client_config'] = json_encode($request['client_config']);
-        }
-
-        if (!isset($request['client'])) {
-
-            $request['client'] = 'persona natual';
         }
 
         $user = User::create($request->all());
