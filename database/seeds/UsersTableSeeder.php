@@ -19,6 +19,7 @@ class UsersTableSeeder extends Seeder
             [
                 'id' => 1,
                 'email' => 'admin@test.com', 
+                'client' => 'persona natural', 
                 'email_verified_at' => now(),
                 'password' => Hash::make('apprevenir88'),
                 'code' => uniqid(Str::random(8)),

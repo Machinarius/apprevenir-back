@@ -138,6 +138,8 @@ class RolesAndPermissionsSeeder extends Seeder
         // Admin
         $admin = Role::create(['name' => 'admin']);
 
+        $admin->givePermissionTo(Permission::all());
+
         // $admin->givePermissionTo([]);
 
         // Client
