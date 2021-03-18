@@ -19,9 +19,12 @@ class UserController extends Controller
     {
         if (Auth::user()->hasRole('root') || Auth::user()->hasRole('admin')) {
 
-            $users = User::filter($request)->with(['profile'])->get()->map(function ($user) {
+            $users = User::filter($request)->with(['profile'])->get()->map(function ($user) use ($request) {
 
-                if (!$user->hasRole('admin') && !$user->hasRole('root')) {
+                if (!isset($request['system']) && !$user->hasRole('admin') && !$user->hasRole('root')) {
+
+                    return $user;
+                } else if (isset($request['system']) && $user->hasRole('admin')) {
 
                     return $user;
                 }
@@ -126,6 +129,48 @@ class UserController extends Controller
         $user = User::create($request->all());
 
         if ($user) {
+
+            $user->profile()->create($request->all());
+        }
+
+        return response()->json(['success' => true, 'data' => 'User created'], 201);
+    }
+
+    public function storeUserSystem(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => [
+                'required', 'unique:users'
+            ],
+            'first_names' => [
+                'required'
+            ],
+            'last_names' => [
+                'required'
+            ],
+            'last_names_two' => [
+                'required'
+            ],
+            'password' => [
+                'required', 'min:8', 'max:30'
+            ],
+            'password_confirmation' => [
+                'required', 'same:password',
+            ],
+        ]);
+
+        if ($validator->fails()) {
+
+        	return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
+        }
+
+        $request['code'] = uniqid(Str::random(8));
+
+        $user = User::create($request->all());
+
+        if ($user) {
+
+            $user->assignRole('admin');
 
             $user->profile()->create($request->all());
         }

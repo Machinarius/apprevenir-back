@@ -46,6 +46,8 @@ Route::prefix('v1')->group(function () {
 
                 Route::delete('/users/{id}', 'UserController@destroy')->name('destroy')->middleware('ApiPermission:users.delete');
 
+                Route::post('/users/systems/create', 'UserController@storeUserSystem')->name('systems')->middleware('ApiPermission:users.update');
+
                 Route::post('/users/answer', 'UserController@answer')->name('user.create.answer');
 
                 Route::get('/users/results/{id}', 'UserController@UserResults')->name('user.result');
