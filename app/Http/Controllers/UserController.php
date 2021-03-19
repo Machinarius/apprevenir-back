@@ -133,7 +133,7 @@ class UserController extends Controller
             $user->profile()->create($request->all());
         }
 
-        return response()->json(['success' => true, 'data' => 'User created'], 201);
+        return response()->json(['success' => true, 'data' => $user], 201);
     }
 
     public function storeUserSystem(Request $request)
