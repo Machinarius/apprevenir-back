@@ -37,7 +37,7 @@ class CommuneController extends Controller
 
         $commune = Commune::create($request->all());
 
-        return response()->json(['success' => true, 'data' => 'Commune created'], 201);
+        return response()->json(['success' => true, 'data' => $commune], 201);
     }
 
     public function show($id)
