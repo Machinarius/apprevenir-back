@@ -24,7 +24,7 @@ class NeighborhoodController extends Controller
             ],
             'neighborhood' => [
                 'required',
-            ],
+            ]
         ]);
 
         if ($validator->fails()) {

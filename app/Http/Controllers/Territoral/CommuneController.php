@@ -25,6 +25,9 @@ class CommuneController extends Controller
             'commune' => [
                 'required',
             ],
+            'zone_type' => [
+                'required'
+            ]
         ]);
 
         if ($validator->fails()) {
