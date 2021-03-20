@@ -40,6 +40,49 @@ class UserController extends Controller
         return response()->json(['success' => true, 'data' => $users], 200);
     }
 
+    function resolveUserClientConfig(User $user) {
+        switch ($user['client']) {
+            case 'entidades territoriales':
+                $allCommunes = function ($user) { return Commune::where('user_id', $user['id'])->with(['neighborhoods']); };
+                $user->clientTypeConfig = [
+                    'communes' => [
+                        'urbana' => $allCommunes($user)->where('zone_type', 'urbana')->get(),
+                        'rural' => $allCommunes($user)->where('zone_type', 'rural')->get()
+                    ]
+                ];
+                break;
+            case 'secretarias de educacion':
+                $user->clientTypeConfig = [
+                    'educationalInstitutions' => $user->educationalInstitutions,
+                    'grades' => $user->grades
+                ];
+                break;
+            case 'instituciones educativas':
+                $user->clientTypeConfig = [
+                    'educationalGrades' => $user->educationalGrades
+                ];
+                break;
+            case 'universidades':
+                $user->clientTypeConfig = [
+                    'programs' => $user->programs,
+                    'modalities' => $user->modalities,
+                    'semesters' => $user->semesters
+                ];
+                break;
+            case 'empresas':
+                $user->clientTypeConfig = [
+                    'locations' => $user->locations,
+                    'areas' => $user->areas,
+                    'schedules' => $user->schedules,
+                ];
+                break;
+        }
+
+        $user = $this->formarUser($user);
+
+        return $user;
+    }
+
     public function clients(Request $request)
     {
         $clients = User::with(['profile'])->where('client', '!=', 'persona natural');
@@ -47,51 +90,9 @@ class UserController extends Controller
             $clients = $clients->where('client', $request['client']);
         }
 
-        $clients = $clients->get()->map(function($user) {
-
-            switch ($user['client']) {
-                case 'entidades territoriales':
-                    $allCommunes = function ($user) { return Commune::where('user_id', $user['id'])->with(['neighborhoods']); };
-                    $user->clientTypeConfig = [
-                        'communes' => [
-                            'urbana' => $allCommunes($user)->where('zone_type', 'urbana')->get(),
-                            'rural' => $allCommunes($user)->where('zone_type', 'rural')->get()
-                        ]
-                    ];
-                    break;
-                case 'secretarias de educacion':
-                    $user->clientTypeConfig = [
-                        'educationalInstitutions' => $user->educationalInstitutions,
-                        'grades' => $user->grades
-                    ];
-                    break;
-                case 'instituciones educativas':
-                    $user->clientTypeConfig = [
-                        'educationalGrades' => $user->educationalGrades
-                    ];
-                    break;
-                case 'universidades':
-                    $user->clientTypeConfig = [
-                        'programs' => $user->programs,
-                        'modalities' => $user->modalities,
-                        'semesters' => $user->semesters
-                    ];
-                    break;
-                case 'empresas':
-                    $user->clientTypeConfig = [
-                        'locations' => $user->locations,
-                        'areas' => $user->areas,
-                        'schedules' => $user->schedules,
-                    ];
-                    break;
-            }
-
-            $user = $this->formarUser($user);
-
-            return $user;
+        $clients = $clients->get()->map(function ($user) {
+            return $this->resolveUserClientConfig($user);
         });
-        
-        
         
         return response()->json(['success' => true, 'data' => $clients], 200);
     }
@@ -203,7 +204,7 @@ class UserController extends Controller
         }
 
         if (isset($user)) {
-
+            $user = $this->resolveUserClientConfig($user);
             return response()->json(['success' => true, 'data' => $user], 200);
         }
 
