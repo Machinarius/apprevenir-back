@@ -12,6 +12,7 @@ use App\Models\Commune;
 use Carbon\Carbon;
 use Validator;
 use Auth;
+use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
@@ -99,7 +100,7 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $validations = [
             'email' => [
                 'required', 'unique:users'
             ],
@@ -111,17 +112,18 @@ class UserController extends Controller
             ],
             'last_names_two' => [
                 'required'
-            ],
-            'password' => [
-                'required', 'min:8', 'max:30'
-            ],
-            'password_confirmation' => [
-                'required', 'same:password',
-            ],
-        ]);
+            ]
+        ];
 
+        if ($request["client"] === "persona natural" || Auth::user() === null || (
+            !Auth::user()->hasRole('root') && !Auth::user()->hasRole('admin')
+        )) {
+            $validations['password'] = ['required', 'min:8', 'max:30'];
+            $validations['password_confirmation'] = ['required', 'same:password'];
+        }
+
+        $validator = Validator::make($request->all(), $validations);
         if ($validator->fails()) {
-
         	return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
         }
 

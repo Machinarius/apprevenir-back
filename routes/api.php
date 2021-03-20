@@ -29,6 +29,7 @@ Route::prefix('v1')->group(function () {
         Route::post('/register', 'UserController@store')->name('register');
 
     Route::middleware(['auth:api', 'UserDisabled'])->group(function () {
+        Route::post('/clients/new', 'UserController@store')->name('register');
 
         // Routes users
 
