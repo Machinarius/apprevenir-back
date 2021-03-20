@@ -42,7 +42,12 @@ class UserController extends Controller
 
     public function clients(Request $request)
     {
-        $clients = User::where('client', $request['client'])->with(['profile'])->get()->map(function($user) {
+        $clients = User::with(['profile'])->where('client', '!=', 'persona natural');
+        if (isset($request["client"])) {
+            $clients = $clients->where('client', $request['client']);
+        }
+
+        $clients = $clients->get()->map(function($user) {
 
             switch ($user['client']) {
                 case 'entidades territoriales':

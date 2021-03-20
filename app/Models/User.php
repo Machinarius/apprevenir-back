@@ -19,13 +19,12 @@ class User extends Authenticatable
     protected $softCascade = [
         'profile', 
         'areas',
-        'loccations',
+        'locations',
         'schedules',
         'educationalGrades',
         'educationalInstitutions',
         'grades',
         'communes',
-        'neighborhoods',
         'modalities',
         'programs',
         'semesters',
@@ -102,11 +101,6 @@ class User extends Authenticatable
     public function communes()
     {
         return $this->hasMany(Commune::class);
-    }
-
-    public function neighborhoods()
-    {
-        return $this->hasMany(Neighborhood::class);
     }
 
     public function zones()
