@@ -117,21 +117,6 @@ Route::prefix('v1')->group(function () {
 
         // Routes territorial
 
-            // Routes zones
-
-                Route::name('zones.')->group(function () {
-
-                    Route::get('/zones', 'Territoral\ZoneController@index')->name('list');
-
-                    Route::post('/zones', 'Territoral\ZoneController@store')->name('create')->middleware('ApiPermission:zones.create');
-
-                    Route::get('/zones/{id}', 'Territoral\ZoneController@show')->name('show');
-
-                    Route::put('/zones/{id}', 'Territoral\ZoneController@update')->name('update')->middleware('ApiPermission:zones.update');
-
-                    Route::delete('/zones/{id}', 'Territoral\ZoneController@destroy')->name('destroy')->middleware('ApiPermission:zones.delete');
-                });
-
             // Routes communes
 
                 Route::name('communes.')->group(function () {
