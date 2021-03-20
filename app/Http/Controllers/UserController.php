@@ -106,12 +106,6 @@ class UserController extends Controller
             ],
             'first_names' => [
                 'required'
-            ],
-            'last_names' => [
-                'required'
-            ],
-            'last_names_two' => [
-                'required'
             ]
         ];
 
@@ -120,6 +114,8 @@ class UserController extends Controller
         )) {
             $validations['password'] = ['required', 'min:8', 'max:30'];
             $validations['password_confirmation'] = ['required', 'same:password'];
+            $validations['last_names'] = ['required'];
+            $validations['last_names_two'] = ['required'];
         }
 
         $validator = Validator::make($request->all(), $validations);
@@ -215,18 +211,20 @@ class UserController extends Controller
 
     public function update(Request $request, $id)
     {
-        $validator = Validator::make($request->all(), [
+        $validations = [
             'first_names' => [
                 'required'
-            ],
-            'last_names' => [
-                'required'
-            ],
-            'last_names_two' => [
-                'required'
-            ],
-        ]);
+            ]
+        ];
 
+        if ($request["client"] === "persona natural" || (
+            !Auth::user()->hasRole('root') && !Auth::user()->hasRole('admin')
+        )) {
+            $validations['last_names'] = ['required'];
+            $validations['last_names_two'] = ['required'];
+        }
+
+        $validator = Validator::make($request->all(), $validations);
         if ($validator->fails()) {
 
         	return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
@@ -268,7 +266,7 @@ class UserController extends Controller
 
             $user->profile->update($request->all());
 
-            return response()->json(['success' => true, 'data' => 'User updated'], 200);
+            return response()->json(['success' => true, 'data' => $user], 200);
         }
 
         return response()->json(['success' => false, 'errors' => 'User not found'], 404);
@@ -448,6 +446,10 @@ class UserController extends Controller
         foreach ($attrRemoves as $remove) {
 
             unset($user[$remove]);
+        }
+
+        if (isset($user["profile"]["client_config"])) {
+            $user["profile"]["client_config"] = json_decode($user["profile"]["client_config"]);
         }
 
         return $user;
