@@ -297,12 +297,8 @@ class TestController extends Controller
             return gettype($test) == "integer";
         });
 
-        $currentEnabledTests = EnabledTest::where('user_id', '=', $id);
-        DB::transaction(function() use (&$currentEnabledTests, &$testIds, &$id) {
-            foreach ($currentEnabledTests as $test) {
-                $test->delete();
-            }
-
+        DB::transaction(function() use (&$testIds, &$id) {
+            DB::statement('DELETE FROM enabled_tests WHERE user_id = ?', [$id]);
             foreach ($testIds as $testId) {
                 $testObject = EnabledTest::create([
                     'user_id' => $id,
@@ -331,6 +327,6 @@ class TestController extends Controller
         //     return $test["user_id"];
         // }, $enabledTests);
 
-        return response()->json(['success' => false, 'data' => $testIds], 200);
+        return response()->json(['success' => true, 'data' => $testIds], 200);
     }
 }
