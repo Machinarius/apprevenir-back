@@ -11,6 +11,7 @@ use Laravel\Passport\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 use Hash;
 use Illuminate\Http\Request;
+use Auth;
 
 class User extends Authenticatable
 {
@@ -144,6 +145,14 @@ class User extends Authenticatable
         $client = trim($request['client']) != "" ? trim($request['client']) : NULL;
         $code = trim($request['code']) != "" ? trim($request['code']) : NULL;
         $status = trim($request['status']) != "" ? $request['status']  === 'true' || $request['status']  === 1  ? true : false : NULL;
+
+        $userIsAdmin = Auth::user() !== null && (
+            Auth::user()->hasRole('root') || Auth::user()->hasRole('admin')
+        );
+
+        if ($client !== "persona natural" && !$userIsAdmin) {
+            $client = NULL;
+        }
 
         if ($email) {
             

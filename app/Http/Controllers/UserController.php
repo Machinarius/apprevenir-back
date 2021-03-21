@@ -100,6 +100,14 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
+        $userIsAdmin = Auth::user() !== null && (
+            Auth::user()->hasRole('root') || Auth::user()->hasRole('admin')
+        );
+
+        if (!$userIsAdmin && $request["client"] !== "persona natural") {
+            return response()->json(['success' => false, 'data' => "Not authorized"], 401);
+        }
+
         $validations = [
             'email' => [
                 'required', 'unique:users'
@@ -109,9 +117,7 @@ class UserController extends Controller
             ]
         ];
 
-        if ($request["client"] === "persona natural" || Auth::user() === null || (
-            !Auth::user()->hasRole('root') && !Auth::user()->hasRole('admin')
-        )) {
+        if ($request["client"] === "persona natural") {
             $validations['password'] = ['required', 'min:8', 'max:30'];
             $validations['password_confirmation'] = ['required', 'same:password'];
             $validations['last_names'] = ['required'];
