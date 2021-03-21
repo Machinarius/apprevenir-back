@@ -13,6 +13,7 @@ use Carbon\Carbon;
 use Validator;
 use Auth;
 use Illuminate\Support\Facades\Log;
+use Hash;
 
 class UserController extends Controller
 {
@@ -256,17 +257,22 @@ class UserController extends Controller
         }
         
         if ($user) {
+            if ($request["password_update_requested"] == true) {
+                if ($request["password"] !== $request["password_confirmation"] ||
+                    !Hash::check($request["current_password"], $user["password"])
+                ) {
+                    return response()->json(['success' => false, 'errors' => 'La contraseña que ingresaste no coincide con la contraseña actual'], 401);
+                }
+            } else {
+                unset($request["password"]);
+                unset($request["password_confirmation"]);
+            }
 
             unset($request['code']);
 
             unset($request['email']);
 
             unset($request['status']);
-
-            if (isset($request['password']) &&  $request['password'] == '') {
-
-                unset($request['password']);
-            }
 
             $user->update($request->all());
 
