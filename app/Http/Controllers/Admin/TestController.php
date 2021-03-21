@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Models\Test;
+use App\Models\EnabledTest;
 use App\Models\Answer;
 use App\Models\TestInformation;
 use Validator;
@@ -269,5 +271,66 @@ class TestController extends Controller
         $image = Storage::disk('public')->get('images/'.$filename);
 
         return $image;
+    }
+
+    public function store_client_enabled_tests(Request $request, $id) {
+        $userIsAdmin = Auth::user() !== null && (
+            Auth::user()->hasRole('root') || Auth::user()->hasRole('admin')
+        );
+
+        // TODO: Use the permissions system correctly
+        if (!$userIsAdmin) {
+            return response()->json(['success' => false, 'errors' => 'Not authorized'], 401);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'test_ids' => [
+                'required',
+            ]
+        ]);
+
+        if ($validator->fails()) {
+        	return response()->json(['success' => false, 'errors' => $validator->errors()], 400);
+        }
+
+        $testIds = array_filter($request["test_ids"], function ($test) {
+            return gettype($test) == "integer";
+        });
+
+        $currentEnabledTests = EnabledTest::where('user_id', '=', $id);
+        DB::transaction(function() use (&$currentEnabledTests, &$testIds, &$id) {
+            foreach ($currentEnabledTests as $test) {
+                $test->delete();
+            }
+
+            foreach ($testIds as $testId) {
+                $testObject = EnabledTest::create([
+                    'user_id' => $id,
+                    'test_id' => $testId
+                ]);
+                $testObject->save();
+            }
+        });
+
+        return response()->json(['success' => true, 'data' => 'Updated enabled tests'], 200);
+    }
+
+    public function get_client_enabled_tests(Request $request, $id) {
+        $userIsAdmin = Auth::user() !== null && (
+            Auth::user()->hasRole('root') || Auth::user()->hasRole('admin')
+        );
+
+        // TODO: Use the permissions system correctly
+        if (!$userIsAdmin) {
+            return response()->json(['success' => false, 'errors' => 'Not authorized'], 401);
+        }
+
+        $enabledTests = EnabledTest::where('user_id', '=', $id)->get();
+        $testIds = $enabledTests->map(function ($test) { return $test["test_id"]; });
+        // $testIds = array_map(function ($test) {
+        //     return $test["user_id"];
+        // }, $enabledTests);
+
+        return response()->json(['success' => false, 'data' => $testIds], 200);
     }
 }
