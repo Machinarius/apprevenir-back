@@ -14,6 +14,10 @@ use Validator;
 use Auth;
 use Illuminate\Support\Facades\Log;
 use Hash;
+use App\Exports\UserExport;
+use App\Exports\UserSystemExport;
+use App\Exports\ResultExport;
+use App\Exports\ClientExport;
 
 class UserController extends Controller
 {
@@ -88,6 +92,7 @@ class UserController extends Controller
     public function clients(Request $request)
     {
         $clients = User::with(['profile'])->where('client', '!=', 'persona natural');
+
         if (isset($request["client"])) {
             $clients = $clients->where('client', $request['client']);
         }
@@ -123,6 +128,8 @@ class UserController extends Controller
             $validations['password_confirmation'] = ['required', 'same:password'];
             $validations['last_names'] = ['required'];
             $validations['last_names_two'] = ['required'];
+        }else {
+            $request['password'] =  uniqid(Str::random(6));
         }
 
         $validator = Validator::make($request->all(), $validations);
@@ -142,6 +149,19 @@ class UserController extends Controller
         if ($user) {
 
             $user->profile()->create($request->all());
+
+            if ($userIsAdmin) {
+
+                if ($request["client"] !== "persona natural") {
+
+                    $user->assignRole('client');
+
+                } else if (isset($request["system"])) {
+
+                    $user->assignRole('admin');
+                }
+            }
+            
         }
 
         return response()->json(['success' => true, 'data' => $user], 201);
@@ -394,7 +414,7 @@ class UserController extends Controller
     {
         if (Auth::user()->id == $id || Auth::user()->hasPermissionTo('users.results')) {
 
-            $resutls = Result::where('user_id', $id)->with(['answers' => function ($answer) {
+            $results = Result::where('user_id', $id)->with(['answers' => function ($answer) {
                 $answer->with(['question']);
             }, 'addiction'])->get();
         } else {
@@ -402,7 +422,7 @@ class UserController extends Controller
             return response()->json(['success' => false, 'data' => 'user not fount'], 404);
         }
 
-        $resutls = $resutls->map(function ($result) {
+        $results = $results->map(function ($result) {
 
             $result->testName = $result->test->name;
 
@@ -413,7 +433,7 @@ class UserController extends Controller
             return $result;  
         });
 
-        return response()->json(['success' => true, 'data' => $resutls], 200);
+        return response()->json(['success' => true, 'data' => $results], 200);
     }
 
     public function getAllUsersResults()
@@ -436,6 +456,101 @@ class UserController extends Controller
         });
 
         return response()->json(['success' => true, 'data' => $resutls], 200); 
+    }
+
+    public function userExport(Request $request) 
+    {
+        $userIsAdmin = Auth::user() !== null && (
+            Auth::user()->hasRole('root') || Auth::user()->hasRole('admin')
+        );
+
+        if (!$userIsAdmin) {
+            return response()->json(['success' => false, 'data' => "Not authorized"], 401);
+        }
+
+        $request['client'] = 'persona natural';
+
+        $users = User::filter($request)->with(['profile'])->where('id', '!=', 1)->get();
+        
+        $name =  uniqid(Str::random(6));
+
+        \Excel::store(new UserExport($users), $name.'.'.$request['extend']);
+
+        return response()->file(storage_path().'/app/'.$name.'.'.$request['extend']);
+    }
+
+    public function userSystemExport(Request $request) 
+    {
+        $userIsAdmin = Auth::user() !== null && (
+            Auth::user()->hasRole('root') || Auth::user()->hasRole('admin')
+        );
+
+        if (!$userIsAdmin) {
+            return response()->json(['success' => false, 'data' => "Not authorized"], 401);
+        }
+
+        $users = User::filter($request)->with(['profile'])->whereHas('roles', function($role) {
+            $role->where('name', 'admin');
+        })->get();
+
+        $name =  uniqid(Str::random(6));
+
+        \Excel::store(new UserSystemExport($users), $name.'.'.$request['extend']);
+
+        return response()->file(storage_path().'/app/'.$name.'.'.$request['extend']);
+    }
+
+    public function clientExport(Request $request) 
+    {
+        $userIsAdmin = Auth::user() !== null && (
+            Auth::user()->hasRole('root') || Auth::user()->hasRole('admin')
+        );
+
+        if (!$userIsAdmin) {
+            return response()->json(['success' => false, 'data' => "Not authorized"], 401);
+        }
+
+        $clients = User::with(['profile'])->where('client', '!=', 'persona natural')->get();
+
+        $name =  uniqid(Str::random(6));
+
+        \Excel::store(new ClientExport($clients), $name.'.'.$request['extend']);
+
+        return response()->file(storage_path().'/app/'.$name.'.'.$request['extend']);
+    }
+
+    public function resultExport(Request $request) 
+    {
+        $userIsAdmin = Auth::user() !== null && (
+            Auth::user()->hasRole('root') || Auth::user()->hasRole('admin')
+        );
+
+        if (!$userIsAdmin) {
+            return response()->json(['success' => false, 'data' => "Not authorized"], 401);
+        }
+        
+        $resutls = Result::whereNotNull('id')->with(['user.profile', 'answers' => function ($answer) {
+            $answer->with(['question']);
+        }, 'addiction'])->get();
+
+        $resutls = $resutls->map(function ($result) {
+
+            $result->testName = $result->test->name;
+
+            $result->resultLevel = $result->informationLevel->name;
+
+            $result->date = $result->created_at->format('d/m/y');
+
+            $result->user->profile->city;
+
+            return $result;  
+        });
+
+        $name =  uniqid(Str::random(6));
+
+        \Excel::store(new ResultExport($resutls), $name.'.'.$request['extend']);
+
+        return response()->file(storage_path().'/app/'.$name.'.'.$request['extend']);
     }
 
     private function formarUser($user) 

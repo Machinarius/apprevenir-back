@@ -17,11 +17,22 @@ class TestController extends Controller
 {
     public function index(Request $request)
     {
+        $userIsAdmin = Auth::user() !== null && (
+            Auth::user()->hasRole('root') || Auth::user()->hasRole('admin')
+        );
+
         $tests = Test::filter($request)->with(['categories', 'addictions' => function ($addictions) {
             $addictions->select('name')->distinct();
-        }])->get();
+        }]);
 
-        return response()->json(['success' => true, 'data' => $tests], 200);
+        if (!$userIsAdmin && isset(Auth::user()->reference)) {
+            
+            $testId = $this->get_client_enabled_tests($request, Auth::user()->reference, true);
+
+            $tests->whereIn('id', $testId);
+        }
+
+        return response()->json(['success' => true, 'data' => $tests->get()], 200);
     }
 
     public function store(Request $request)
@@ -311,7 +322,7 @@ class TestController extends Controller
         return response()->json(['success' => true, 'data' => 'Updated enabled tests'], 200);
     }
 
-    public function get_client_enabled_tests(Request $request, $id) {
+    public function get_client_enabled_tests(Request $request, $id, $filterTest = false) {
         $userIsAdmin = Auth::user() !== null && (
             Auth::user()->hasRole('root') || Auth::user()->hasRole('admin')
         );
@@ -326,6 +337,11 @@ class TestController extends Controller
         // $testIds = array_map(function ($test) {
         //     return $test["user_id"];
         // }, $enabledTests);
+
+        if ($filterTest) {
+
+            return $testIds;
+        }
 
         return response()->json(['success' => true, 'data' => $testIds], 200);
     }

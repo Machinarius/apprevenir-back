@@ -29,11 +29,7 @@ Route::prefix('v1')->group(function () {
         Route::post('/register', 'UserController@store')->name('register');
 
     Route::middleware(['auth:api', 'UserDisabled'])->group(function () {
-        Route::post('/clients/new', 'UserController@store')->name('client.create');
-        Route::put('/client/{id}', 'UserController@update')->name('client.update');
-        Route::get('/clients/{id}/enabled_tests', 'Admin\TestController@get_client_enabled_tests')->name('client.enabled_tests');
-        Route::put('/clients/{id}/enabled_tests', 'Admin\TestController@store_client_enabled_tests')->name('client.enabled_tests');
-
+       
         // Routes users
 
             Route::name('users.')->group(function () {
@@ -57,7 +53,19 @@ Route::prefix('v1')->group(function () {
                 Route::get('/users/results/{id}', 'UserController@UserResults')->name('user.result');
 
                 Route::get('/results/all', 'UserController@getAllUsersResults')->name('users.results')->middleware('ApiPermission:users.results');
+
+                
             });
+        
+        // Routes clients
+
+        Route::post('/clients/register', 'UserController@store')->name('client.create');
+
+        Route::put('/clients/{id}', 'UserController@update')->name('client.update');
+
+        Route::get('/clients/{id}/enabled_tests', 'Admin\TestController@get_client_enabled_tests')->name('clients.test.enabled');
+
+        Route::put('/clients/{id}/enabled_tests', 'Admin\TestController@store_client_enabled_tests')->name('clients.test.enabled.update');
 
         // Routes categories
 
@@ -338,6 +346,16 @@ Route::prefix('v1')->group(function () {
 
                 Route::delete('/tests/{id}', 'Admin\TestController@destroy')->name('destroy')->middleware('ApiPermission:tests.delete');
             });
+
+        // Routes export
+
+            Route::get('/users/all/exports', 'UserController@userExport')->name('export');
+
+            Route::get('/users/system/all/exports', 'UserController@userSystemExport')->name('system.export');
+
+            Route::get('/users/results/all/exports', 'UserController@resultExport')->name('results.export');
+
+            Route::get('/clients/all/exports', 'UserController@clientExport')->name('clients.export');
 
         // Auth system
 
