@@ -67,6 +67,10 @@ Route::prefix('v1')->group(function () {
 
         Route::put('/clients/{id}/enabled_tests', 'Admin\TestController@store_client_enabled_tests')->name('clients.test.enabled.update');
 
+        Route::post('/clients/image/{id}', 'UserController@updateImageClient')->name('client.image.update');
+
+        Route::get('/clients/image/{id}', 'UserController@getImageClient')->name('client.image.get');
+
         // Routes categories
 
             Route::name('categories.')->group(function () {

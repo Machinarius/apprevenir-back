@@ -24,7 +24,8 @@ class Profile extends Model
         'country_id',
         'state_id',
         'city_id',
-        'client_config'
+        'client_config',
+        'image'
     ];
 
     public function user()

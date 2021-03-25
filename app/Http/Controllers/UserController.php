@@ -18,6 +18,8 @@ use App\Exports\UserExport;
 use App\Exports\UserSystemExport;
 use App\Exports\ResultExport;
 use App\Exports\ClientExport;
+use Storage;
+use File;
 
 class UserController extends Controller
 {
@@ -551,6 +553,49 @@ class UserController extends Controller
         \Excel::store(new ResultExport($resutls), $name.'.'.$request['extend']);
 
         return response()->file(storage_path().'/app/'.$name.'.'.$request['extend']);
+    }
+
+    public function updateImageClient(Request $request, $id)
+    {
+        $user = User::where('id', $id)->with(['profile'])->first();
+        
+        if (isset($request['image']) && $user) {
+
+            $image = $request->file('image');
+
+            $extension = $image->getClientOriginalExtension();
+    
+            // $name = $image->getClientOriginalName();
+
+            $name =  uniqid(Str::random(6));
+    
+            Storage::disk('public')->put('/logos/'.$name.'.'.$extension, File::get($image));
+
+            // $url = storage_path().'/app/public/logos/'.$name.'.'.$extension;
+
+            $user->profile->update([
+                'image' => $name.'.'.$extension
+            ]);
+
+            return response()->json(['success' => true, 'data' => $url], 200); 
+        }
+    }
+
+    public function getImageClient($id)
+    {
+        if (Auth::user()->hasRole('root') || Auth::user()->hasRole('admin') || Auth::user()->id == $id) {
+
+            $user = User::where('id', $id)->with(['profile'])->first();
+
+            if ($user) {
+
+                $url = storage_path().'/app/public/logos/'.$user->profile->image;
+
+                return response()->json(['success' => true, 'data' => $url], 200);
+            }
+        }
+
+        return response()->json(['success' => false, 'errors' => 'User not found'], 404);
     }
 
     private function formarUser($user) 
