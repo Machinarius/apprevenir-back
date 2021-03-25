@@ -571,7 +571,7 @@ class UserController extends Controller
     
             Storage::disk('public')->put('/logos/'.$name.'.'.$extension, File::get($image));
 
-            // $url = storage_path().'/app/public/logos/'.$name.'.'.$extension;
+            $url = storage_path().'/app/public/logos/'.$name.'.'.$extension;
 
             $user->profile->update([
                 'image' => $name.'.'.$extension
