@@ -558,8 +558,11 @@ class UserController extends Controller
     public function updateImageClient(Request $request, $id)
     {
         $user = User::where('id', $id)->with(['profile'])->first();
+        if (!$user) {
+            return response()->json(['success' => false, 'errors' => 'User not found'], 404);
+        }
         
-        if (isset($request['image']) && $user) {
+        if (isset($request['image'])) {
 
             $image = $request->file('image');
 
@@ -577,8 +580,12 @@ class UserController extends Controller
                 'image' => $name.'.'.$extension
             ]);
 
-            return response()->json(['success' => true, 'data' => $url], 200); 
+            return response()->json(['success' => true, 'data' => [
+                'generated_filename' => $name.".".$extension
+            ]], 200); 
         }
+
+        return response()->json(['success' => false, 'errors' => 'Image was not provided'], 401);
     }
 
     public function getImageClient($id)
