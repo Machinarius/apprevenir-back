@@ -574,7 +574,7 @@ class UserController extends Controller
     
             Storage::disk('public')->put('/images/'.$name.'.'.$extension, File::get($image));
 
-            $url = storage_path().'/app/public/logos/'.$name.'.'.$extension;
+            // $url = storage_path().'/app/public/logos/'.$name.'.'.$extension;
 
             $user->profile->update([
                 'image' => $name.'.'.$extension
@@ -595,8 +595,8 @@ class UserController extends Controller
             $user = User::where('id', $id)->with(['profile'])->first();
 
             if ($user) {
-
-                $url = asset('images/'.$user->profile->image);
+               
+                $url = asset('storage/images/'.$user->profile->image);
 
                 return response()->json(['success' => true, 'data' => $url], 200);
             }
