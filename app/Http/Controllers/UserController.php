@@ -572,7 +572,7 @@ class UserController extends Controller
 
             $name =  uniqid(Str::random(6));
     
-            Storage::disk('public')->put('/images/'.$name.'.'.$extension, File::get($image));
+            Storage::disk('public')->put('/logos/'.$name.'.'.$extension, File::get($image));
 
             // $url = storage_path().'/app/public/logos/'.$name.'.'.$extension;
 
@@ -596,7 +596,7 @@ class UserController extends Controller
 
             if ($user) {
 
-                $url = asset('images/'.$user->profile->image);
+                $url = asset('logos/'.$user->profile->image);
 
                 return response()->json(['success' => true, 'data' => $url], 200);
             }
