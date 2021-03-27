@@ -595,8 +595,8 @@ class UserController extends Controller
             $user = User::where('id', $id)->with(['profile'])->first();
 
             if ($user) {
-
-                $url = asset('logos/'.$user->profile->image);
+               
+                $url = asset('storage/images/'.$user->profile->image);
 
                 return response()->json(['success' => true, 'data' => $url], 200);
             }
