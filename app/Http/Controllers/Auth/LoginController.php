@@ -5,8 +5,11 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Profile;
 use Validator;
 use Auth;
+
+use App\Http\Controllers\UserController;
 
 class LoginController extends Controller
 {
@@ -53,6 +56,23 @@ class LoginController extends Controller
                     'role' => Auth::user()->getRoleNames()->first(),
                     'profile' => Auth::user()->profile 
                 ];
+
+                if (is_int($user["reference"])) {
+                    $referrerProfile = Profile::where('user_id', '=', $user["reference"])->first();
+                    if ($referrerProfile) {
+                        $imageUrl = UserController::getUrlToClientImage($referrerProfile["user_id"]);
+                        $brandColor = NULL;
+                        if (isset($referrerProfile["client_config"])) {
+                            $referrerConfig = json_decode($referrerProfile["client_config"]);
+                            $brandColor = $referrerConfig->brand_color;
+                        }
+
+                        $access["referrer_config"] = [
+                            "logo_url" => $imageUrl,
+                            "brand_color" => $brandColor
+                        ];
+                    }
+                }
 
                 return response()->json(['success' => true, 'data' => $access], 200);
             } else {

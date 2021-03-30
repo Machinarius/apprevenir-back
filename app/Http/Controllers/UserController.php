@@ -590,19 +590,28 @@ class UserController extends Controller
 
     public function getImageClient($id)
     {
-        if (Auth::user()->hasRole('root') || Auth::user()->hasRole('admin') || Auth::user()->id == $id) {
+        $clientImageUrl = UserController::getUrlToClientImage($id);
 
-            $user = User::where('id', $id)->with(['profile'])->first();
+        if (is_null($clientImageUrl)) {
+            return response()->json(['success' => false, 'errors' => 'User not found'], 404);
+        }
+
+        return response()->json(['success' => true, 'data' => $clientImageUrl], 200);
+    }
+
+    public static function getUrlToClientImage($userId) {
+        if (Auth::user()->hasRole('root') || Auth::user()->hasRole('admin') || Auth::user()->id == $userId) {
+
+            $user = User::where('id', $userId)->with(['profile'])->first();
 
             if ($user) {
                
                 $url = asset('storage/images/'.$user->profile->image);
-
-                return response()->json(['success' => true, 'data' => $url], 200);
+                return $url;
             }
         }
 
-        return response()->json(['success' => false, 'errors' => 'User not found'], 404);
+        return NULL;
     }
 
     private function formarUser($user) 
