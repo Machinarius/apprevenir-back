@@ -56,7 +56,7 @@ class UserController extends Controller
                     'communes' => [
                         'urbana' => $allCommunes($user)->where('zone_type', 'urbana')->get(),
                         'rural' => $allCommunes($user)->where('zone_type', 'rural')->get()
-                    ]
+                    ],
                 ];
                 break;
             case 'secretarias de educacion':
@@ -100,6 +100,8 @@ class UserController extends Controller
         }
 
         $clients = $clients->get()->map(function ($user) {
+            $user->profile->last_names = '';
+            $user->profile->last_names_two = '';
             return $this->resolveUserClientConfig($user);
         });
         
@@ -111,11 +113,7 @@ class UserController extends Controller
         $userIsAdmin = Auth::user() !== null && (
             Auth::user()->hasRole('root') || Auth::user()->hasRole('admin')
         );
-
-        if (!$userIsAdmin && $request["client"] !== "persona natural") {
-            return response()->json(['success' => false, 'data' => "Not authorized"], 401);
-        }
-
+        
         $validations = [
             'email' => [
                 'required', 'unique:users'
