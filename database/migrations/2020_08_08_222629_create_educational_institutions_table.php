@@ -29,6 +29,6 @@ class CreateEducationalInstitutionsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('grades');
+        Schema::dropIfExists('educational_grades');
     }
 }

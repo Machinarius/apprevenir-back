@@ -28,7 +28,6 @@ class TestController extends Controller
         if (!$userIsAdmin && isset(Auth::user()->reference)) {
             
             $testId = $this->get_client_enabled_tests($request, Auth::user()->reference, true);
-
             $tests->whereIn('id', $testId);
         }
 
@@ -328,9 +327,9 @@ class TestController extends Controller
         );
 
         // TODO: Use the permissions system correctly
-        if (!$userIsAdmin) {
-            return response()->json(['success' => false, 'errors' => 'Not authorized'], 401);
-        }
+        // if (!$userIsAdmin) {
+        //     return response()->json(['success' => false, 'errors' => 'Not authorized'], 401);
+        // }
 
         $enabledTests = EnabledTest::where('user_id', '=', $id)->get();
         $testIds = $enabledTests->map(function ($test) { return $test["test_id"]; });

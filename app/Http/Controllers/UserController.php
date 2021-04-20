@@ -56,7 +56,7 @@ class UserController extends Controller
                     'communes' => [
                         'urbana' => $allCommunes($user)->where('zone_type', 'urbana')->get(),
                         'rural' => $allCommunes($user)->where('zone_type', 'rural')->get()
-                    ]
+                    ],
                 ];
                 break;
             case 'secretarias de educacion':
@@ -100,6 +100,8 @@ class UserController extends Controller
         }
 
         $clients = $clients->get()->map(function ($user) {
+            $user->profile->last_names = '';
+            $user->profile->last_names_two = '';
             return $this->resolveUserClientConfig($user);
         });
         
@@ -111,11 +113,7 @@ class UserController extends Controller
         $userIsAdmin = Auth::user() !== null && (
             Auth::user()->hasRole('root') || Auth::user()->hasRole('admin')
         );
-
-        if (!$userIsAdmin && $request["client"] !== "persona natural") {
-            return response()->json(['success' => false, 'data' => "Not authorized"], 401);
-        }
-
+        
         $validations = [
             'email' => [
                 'required', 'unique:users'
@@ -367,49 +365,19 @@ class UserController extends Controller
 
         	return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
         }
-       
-        $answers = Answer::whereIn('id', $request['answers'])->get();
 
-        $points = 0;
-        
-        if ($answers) {
+        if ($request['test_array']) {
 
-            foreach ($answers as $key => $answer) {
-                
-                $points += $answer->value;
+            foreach ($request['answers'] as $key => $answer) {
+
+                $testResult[] =  $this->storeAnswers($request['test_id'], $answer['answers'], $answer['addiction']);
             }
+        } else {
             
-            $attrInfo = [
-                ['test_id', '=', $request['test_id']],
-                ['min', '<=', $points],
-                ['max', '>=', $points]
-            ];
-            
-            $testInfo = TestInformation::where($attrInfo)->first();
-
-            $testInfo->resultLevel = $testInfo->informationLevel->name;
-
-            $addiction = $request['addiction_id'] != NULL ? $request['addiction_id'] : NULL;
-
-            $result = Result::create([
-                'user_id' => Auth::user()->id,
-                'test_id' => $request['test_id'],
-                'information_level_id' => $testInfo->information_level_id,
-                'addiction_id' => $addiction,
-                'date' => Carbon::today()->format('Y-m-d'),
-                'time' => Carbon::today()->format('h:m:s'),
-                'total' => $points
-            ]);
-
-            foreach ($answers as $key => $answer) {
-
-                Auth::user()->answers()->attach($answer->id, ['test_id' => $request['test_id'], 'result_id' => $result->id]);
-            }
-
-            return response()->json(['success' => true, 'data' => $testInfo], 200);
+            $testResult[] = $this->storeAnswers($request['test_id'], $request['answers'], $request['addiction_id']);
         }
 
-        return response()->json(['success' => false, 'data' => 'error answers'], 404);
+        return response()->json(['success' => true, 'data' => $testResult], 200);
     } 
 
     public function UserResults($id) 
@@ -641,5 +609,53 @@ class UserController extends Controller
         }
 
         return $user;
+    }
+
+    private function storeAnswers($test_id, $answers, $addiction) 
+    {
+        $answers = Answer::whereIn('id', $answers)->get();
+
+        $points = 0;
+        
+        if ($answers) {
+
+            foreach ($answers as $key => $answer) {
+                
+                $points += $answer->value;
+            }
+            
+            $attrInfo = [
+                ['test_id', '=', $test_id],
+                ['min', '<=', $points],
+                ['max', '>=', $points]
+            ];
+            
+            $testInfo = TestInformation::where($attrInfo)->first();
+
+            $testInfo->resultLevel = $testInfo->informationLevel->name;
+
+            $addiction = $addiction != NULL ? $addiction : NULL;
+
+            $result = Result::create([
+                'user_id' => Auth::user()->id,
+                'test_id' => $test_id,
+                'information_level_id' => $testInfo->information_level_id,
+                'addiction_id' => $addiction,
+                'date' => Carbon::today()->format('Y-m-d'),
+                'time' => Carbon::today()->format('h:m:s'),
+                'total' => $points
+            ]);
+
+            $testInfo->addiction = isset($addiction) ? $result->addiction->name : NULL;
+
+            foreach ($answers as $key => $answer) {
+
+                Auth::user()->answers()->attach($answer->id, ['test_id' => $test_id, 'result_id' => $result->id]);
+            }
+
+            return $testInfo;
+        }
+
+        return false;
     }
 }
