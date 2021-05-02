@@ -32,7 +32,15 @@ class UserController extends Controller
                 if (!isset($request['system']) && !$user->hasRole('admin') && !$user->hasRole('root')) {
 
                     return $user;
-                } else if (isset($request['system']) && $user->hasRole('admin')) {
+                } else if (isset($request['system']) && $user->id != 1 && ($user->hasRole('admin') || $user->hasRole('root'))) {
+
+                    if ($user->hasRole('admin')) {
+
+                        $user->system = 'Administrador';
+                    } else {
+
+                        $user->system = 'Super Administrador';
+                    }
 
                     return $user;
                 }
@@ -124,13 +132,12 @@ class UserController extends Controller
         ];
 
         if ($request["client"] === "persona natural") {
-            $validations['password'] = ['required', 'min:8', 'max:30'];
-            $validations['password_confirmation'] = ['required', 'same:password'];
             $validations['last_names'] = ['required'];
             $validations['last_names_two'] = ['required'];
-        }else {
-            $request['password'] =  uniqid(Str::random(6));
         }
+
+        $validations['password'] = ['required', 'min:8', 'max:30'];
+        $validations['password_confirmation'] = ['required', 'same:password'];
 
         $validator = Validator::make($request->all(), $validations);
         if ($validator->fails()) {
@@ -158,7 +165,18 @@ class UserController extends Controller
 
                 } else if (isset($request["system"])) {
 
-                    $user->assignRole('admin');
+                    if (isset($request["userProfile"])) {
+
+                        if ($request["userProfile"] == 'Super Administrador') {
+
+                            $role = 'root';
+                        } else {
+
+                            $role = 'admin';
+                        }
+
+                        $user->assignRole($role);
+                    }
                 }
             }
             
@@ -201,7 +219,18 @@ class UserController extends Controller
 
         if ($user) {
 
-            $user->assignRole('admin');
+            if (isset($request["userProfile"])) {
+
+                if ($request["userProfile"] == 'Super Administrador') {
+
+                    $role = 'root';
+                } else {
+
+                    $role = 'admin';
+                }
+
+                $user->assignRole($role);
+            }
 
             $user->profile()->create($request->all());
         }
@@ -218,6 +247,7 @@ class UserController extends Controller
                 if (Auth::user()->hasRole('root') || Auth::user()->hasRole('admin')) {
 
                     $user = User::where('id', $id)->with(['profile'])->first();
+
                 } else {
 
                     $user = User::where(['id' => $id, 'reference' => Auth::user()->id])->with(['profile'])->first();
@@ -229,7 +259,17 @@ class UserController extends Controller
         }
 
         if (isset($user)) {
+
+            if ($user->hasRole('admin')) {
+
+                $user->system = 'Administrador';
+            } else {
+
+                $user->system = 'Super Administrador';
+            }
+
             $user = $this->resolveUserClientConfig($user);
+            
             return response()->json(['success' => true, 'data' => $user], 200);
         }
 
@@ -262,8 +302,23 @@ class UserController extends Controller
             if (Auth::user()->hasPermissionTo('users.update')) {
 
                 $user = User::find($id);
+                
+                if (isset($request["userProfile"])) {
+                    
+                    if ($request["userProfile"] == 'Super Administrador') {
 
-                if ($user->hasRole('root')) {
+                        $role = 'root';
+                    } else {
+
+                        $role = 'admin';
+                    }
+
+                    $user->syncRoles(['']);
+                    
+                    $user->assignRole($role);
+                }
+                
+                if ($user->id == 1 ) {
 
                     return response()->json(['success' => false, 'errors' => 'Forbidden'], 403);
                 }
@@ -291,8 +346,6 @@ class UserController extends Controller
             unset($request['code']);
 
             unset($request['email']);
-
-            unset($request['status']);
 
             $user->update($request->all());
 
@@ -420,7 +473,49 @@ class UserController extends Controller
 
             $result->date = $result->created_at->format('d/m/y');
 
-            $result->user->profile->city;
+            $result->city = isset($result->user->profile->city) ? $result->user->profile->city->name : '';
+
+            $clientConfig = json_decode($result->user->profile->client_config, true);
+
+            $result->zone = [
+                'casco' => '',
+                'option_a' => '',
+                'option_b' => '',
+            ];
+
+            $result->university = [
+                'university' => '',
+                'programs' => '',
+                'modalities' => '',
+                'semesters' => ''
+            ];
+
+            if (isset($clientConfig['client'])) {
+
+                if ($clientConfig['client_type'] == 'entidades territoriales') {
+                    $commune = Commune::where('user_id', $clientConfig['client'])->where('zone_type', $clientConfig['selectA'])
+                                ->where('id', $clientConfig['selectB'])
+                                ->with(['neighborhoods' => function ($neighborhoods) use ($clientConfig) {
+                                    $neighborhoods->where('id', $clientConfig['selectC'])->first();
+                                }])
+                                ->first();
+                    $result->zone = [
+                        'casco' => $clientConfig['selectA'],
+                        'option_a' => $commune['commune'],
+                        'option_b' => $commune['neighborhoods'][0]->neighborhood,
+                    ];
+                } else if ($clientConfig['client_type'] == 'universidades') {
+
+                    $client = User::where('id', $clientConfig['client'])->with(['profile'])->first();
+
+                    $result->university = [
+                        'university' => $client->profile->first_names,
+                        'program' => $client->programs->where('id', $clientConfig['selectA'])->first()->program,
+                        'modality' => $client->modalities->where('id', $clientConfig['selectB'])->first()->modality,
+                        'semester' => $client->semesters->where('id', $clientConfig['selectC'])->first()->semester
+                    ];
+                }
+            }
 
             return $result;  
         });
