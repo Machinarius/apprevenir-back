@@ -10,6 +10,7 @@ use App\Models\TestInformation;
 use App\Models\Result;
 use App\Models\Commune;
 use Carbon\Carbon;
+use App\Notifications\UserRegister;
 use Validator;
 use Auth;
 use Illuminate\Support\Facades\Log;
@@ -180,6 +181,7 @@ class UserController extends Controller
                 }
             }
             
+            $user->notify(new UserRegister($user->email, $user->profile->first_names));
         }
 
         return response()->json(['success' => true, 'data' => $user], 201);

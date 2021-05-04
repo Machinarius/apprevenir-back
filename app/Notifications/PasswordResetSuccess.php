@@ -40,12 +40,11 @@ class PasswordResetSuccess extends Notification implements ShouldQueue
      */
     public function toMail($notifiable)
     {
+        $url = url('');
+
         return (new MailMessage)
             ->subject('Contraseña reestablecida')
-            ->greeting('Saludos')
-            ->line('Has cambiado tu contraseña correctamente.')
-            ->line('Gracias.')
-            ->salutation('Att: Apprevenir administración');
+            ->markdown('mail.email-resetsuccess', compact('url'));
     }
 
     /**
