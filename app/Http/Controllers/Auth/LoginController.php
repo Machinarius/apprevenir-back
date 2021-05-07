@@ -33,6 +33,10 @@ class LoginController extends Controller
             if ($user->status == 0) {
 
                 return response()->json(['success' => false, 'data' => 'Usuario inactivo'], 400);
+
+            } else if ($user->password == NULL) {
+
+                return response()->json(['success' => false, 'data' => 'Debe reestablecer la contraseña'], 400);
             }
 
             $login = $request->only('email', 'password');
