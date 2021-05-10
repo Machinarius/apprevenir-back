@@ -16,7 +16,7 @@ class CreateGendersTable extends Migration
         Schema::create('genders', function (Blueprint $table) {
             $table->id();
             $table->foreignId('gender_id')->nullable()->constrained('genders')->onDelete('cascade');
-            $table->string('lang');
+            $table->string('lang')->default('es');
             $table->string('name');
             $table->timestamps();
         });

@@ -17,7 +17,7 @@ class CreateQuestionsTable extends Migration
             $table->id();
             $table->foreignId('test_id')->constrained('tests')->onDelete('cascade');
             $table->foreignId('question_id')->nullable()->constrained('questions')->onDelete('cascade');
-            $table->string('lang');
+            $table->string('lang')->default('es');
             $table->integer('order');
             $table->string('question');
             $table->timestamps();

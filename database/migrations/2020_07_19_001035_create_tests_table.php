@@ -16,7 +16,7 @@ class CreateTestsTable extends Migration
         Schema::create('tests', function (Blueprint $table) {
             $table->id();
             $table->foreignId('test_id')->nullable()->constrained('tests')->onDelete('cascade');
-            $table->string('lang');
+            $table->string('lang')->default('es');
             $table->string('name');
             $table->string('image');
             $table->text('introduction');

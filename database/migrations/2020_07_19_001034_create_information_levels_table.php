@@ -16,7 +16,7 @@ class CreateInformationLevelsTable extends Migration
         Schema::create('information_levels', function (Blueprint $table) {
             $table->id();
             $table->foreignId('information_level_id')->nullable()->constrained('information_levels')->onDelete('cascade');
-            $table->string('lang');
+            $table->string('lang')->default('es');
             $table->string('name');
             $table->timestamps();
         });

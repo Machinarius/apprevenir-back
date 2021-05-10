@@ -20,9 +20,9 @@ class Answer extends Model
         'value'
     ];
 
-    public function question()
+    public function questions()
     {
-        return $this->belongsTo(Question::class);
+        return $this->belongsToMany(Question::class, 'question_answer')->withPivot('value');
     }
 
     public function users()

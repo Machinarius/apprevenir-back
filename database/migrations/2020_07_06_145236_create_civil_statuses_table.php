@@ -16,7 +16,7 @@ class CreateCivilStatusesTable extends Migration
         Schema::create('civil_statuses', function (Blueprint $table) {
             $table->id();
             $table->foreignId('civil_status_id')->nullable()->constrained('civil_statuses')->onDelete('cascade');
-            $table->string('lang');
+            $table->string('lang')->default('es');
             $table->string('name');
             $table->timestamps();
         });

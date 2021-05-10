@@ -439,9 +439,7 @@ class UserController extends Controller
     {
         if (Auth::user()->id == $id || Auth::user()->hasPermissionTo('users.results')) {
 
-            $results = Result::where('user_id', $id)->with(['answers' => function ($answer) {
-                $answer->with(['question']);
-            }, 'addiction'])->get();
+            $results = Result::where('user_id', $id)->with(['answers', 'questions', 'addiction'])->get();
         } else {
 
             return response()->json(['success' => false, 'data' => 'user not fount'], 404);
@@ -463,9 +461,9 @@ class UserController extends Controller
 
     public function getAllUsersResults()
     {
-        $resutls = Result::whereNotNull('id')->with(['user.profile', 'answers' => function ($answer) {
-            $answer->with(['question']);
-        }, 'addiction'])->get();
+        $resutls = Result::whereNotNull('id')->with(['user.profile', 'answers', 'questions', 'addiction'])
+        ->orderBy('id', 'DESC')
+        ->get();
 
         $resutls = $resutls->map(function ($result) {
 
@@ -701,15 +699,18 @@ class UserController extends Controller
 
     private function storeAnswers($test_id, $answers, $addiction) 
     {
-        $answers = Answer::whereIn('id', $answers)->get();
-
         $points = 0;
         
         if ($answers) {
 
             foreach ($answers as $key => $answer) {
-                
-                $points += $answer->value;
+
+                $answerRg = Answer::where('id', $answer[0])->first();
+
+                if ($answerRg) {
+
+                    $points += $answerRg->questions->first()->pivot->value;
+                }
             }
             
             $attrInfo = [
@@ -738,7 +739,12 @@ class UserController extends Controller
 
             foreach ($answers as $key => $answer) {
 
-                Auth::user()->answers()->attach($answer->id, ['test_id' => $test_id, 'result_id' => $result->id]);
+                $answerRg = Answer::where('id', $answer[0])->first();
+
+                if ($answerRg) {
+
+                    Auth::user()->answers()->attach($answerRg->id, ['test_id' => $test_id, 'result_id' => $result->id, 'question_id' => $answer[1]]);
+                }
             }
 
             return $testInfo;
