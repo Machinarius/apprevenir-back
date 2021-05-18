@@ -3,14 +3,15 @@
 use Illuminate\Database\Seeder;
 use JeroenZwart\CsvSeeder\CsvSeeder;
 
-class AnswesTableSeeder extends CsvSeeder
+class QuestionAnswerTableSeeder extends CsvSeeder
 {
     public function __construct()
     {
-        $this->file = '/database/seeds/csvs/answers.csv';
-        $this->tablename = 'answers';
+        $this->file = '/database/seeds/csvs/question_answer.csv';
+        $this->tablename = 'question_answer';
         $this->timestamps = date('Y-m-d H:i:s');
         $this->delimiter = ',';
+        $this->encode = TRUE; 
         $this->truncate = FALSE;
     }
 

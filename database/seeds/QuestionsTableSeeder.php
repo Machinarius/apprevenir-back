@@ -11,8 +11,7 @@ class QuestionsTableSeeder extends CsvSeeder
         $this->tablename = 'questions';
         $this->timestamps = date('Y-m-d H:i:s');
         $this->delimiter = ',';
-        $this->empty = TRUE;
-        $this->encode = 'TRUE';
+        $this->truncate = FALSE;
     }
 
     /**
