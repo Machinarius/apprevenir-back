@@ -84,7 +84,7 @@ class AddictionsTableSeeder extends Seeder
             ],
             [
                 'id' => 8,
-                'name' => '0', 
+                'name' => 'Otros', 
                 'lang' => 'es',
                 'description' => '
                     Otros   
