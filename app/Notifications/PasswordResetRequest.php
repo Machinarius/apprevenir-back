@@ -42,7 +42,7 @@ class PasswordResetRequest extends Notification implements ShouldQueue
      */
     public function toMail($notifiable)
     {
-        $url = url('reset-password/'.$this->token);
+        $url = url('recovery-password/'.$this->token);
 
         return (new MailMessage)
                     ->subject('Reestablecer contraseña')
