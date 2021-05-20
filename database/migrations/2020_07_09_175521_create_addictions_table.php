@@ -16,7 +16,7 @@ class CreateAddictionsTable extends Migration
         Schema::create('addictions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('addiction_id')->nullable()->constrained('addictions')->onDelete('cascade');
-            $table->string('lang');
+            $table->string('lang')->default('es');
             $table->string('name');
             $table->text('description')->nullable();
             $table->timestamps();

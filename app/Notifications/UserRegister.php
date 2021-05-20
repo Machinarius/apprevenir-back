@@ -7,18 +7,22 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class PasswordResetSuccess extends Notification implements ShouldQueue
+class UserRegister extends Notification implements ShouldQueue
 {
     use Queueable;
+
+    protected $email;
+    protected $name;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($email, $name)
     {
-        //
+        $this->email = $email;
+        $this->name = $name;
     }
 
     /**
@@ -40,11 +44,13 @@ class PasswordResetSuccess extends Notification implements ShouldQueue
      */
     public function toMail($notifiable)
     {
+        $email = $this->email;
+        $name = $this->name;
         $url = url('');
 
         return (new MailMessage)
-            ->subject('Contraseña reestablecida')
-            ->markdown('mail.email-resetsuccess', compact('url'));
+                    ->subject('Bienvenido')
+                    ->markdown('mail.email-register', compact('email', 'name', 'url'));
     }
 
     /**

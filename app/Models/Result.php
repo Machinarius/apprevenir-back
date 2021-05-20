@@ -46,4 +46,9 @@ class Result extends Model
     {
         return $this->belongsToMany(Answer::class, 'user_answer');
     }
+
+    public function questions()
+    {
+        return $this->belongsToMany(Question::class, 'user_answer');
+    }
 }

@@ -537,6 +537,27 @@ class TestAddictionTableSeeder extends Seeder
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s'),
             ],
+            [
+                'test_id' => 5, 
+                'addiction_id' => 8,
+                'test_information_id' => 37,
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ],
+            [
+                'test_id' => 5, 
+                'addiction_id' => 8,
+                'test_information_id' => 38,
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ],
+            [
+                'test_id' => 5, 
+                'addiction_id' => 8,
+                'test_information_id' => 39,
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ],
         ]);
     }
 }

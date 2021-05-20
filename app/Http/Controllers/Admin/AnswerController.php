@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Modals\Answer;
+use App\Models\Answer;
 use Validator;
 
 class AnswerController extends Controller

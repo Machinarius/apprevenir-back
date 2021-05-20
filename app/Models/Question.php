@@ -30,7 +30,7 @@ class Question extends Model
 
     public function answers()
     {
-        return $this->hasMany(Answer::class);
+        return $this->belongsToMany(Answer::class, 'question_answer')->withPivot('value');
     }
 
     public function scopeFilter($query, Request $request)

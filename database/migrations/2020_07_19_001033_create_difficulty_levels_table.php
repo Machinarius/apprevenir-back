@@ -16,7 +16,7 @@ class CreateDifficultyLevelsTable extends Migration
         Schema::create('difficulty_levels', function (Blueprint $table) {
             $table->id();
             $table->foreignId('difficulty_level_id')->nullable()->constrained('difficulty_levels')->onDelete('cascade');
-            $table->string('lang');
+            $table->string('lang')->default('es');
             $table->string('name');
             $table->timestamps();
         });

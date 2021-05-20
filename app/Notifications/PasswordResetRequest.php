@@ -42,16 +42,11 @@ class PasswordResetRequest extends Notification implements ShouldQueue
      */
     public function toMail($notifiable)
     {
-        $url = url('reset-password/'.$this->token);
+        $url = url('recovery-password/'.$this->token);
 
         return (new MailMessage)
                     ->subject('Reestablecer contraseña')
-                    ->greeting('Saludos')
-                    ->line('Estás recibiendo este correo electrónico porque recibimos una solicitud de restablecimiento de contraseña para tu cuenta.')
-                    ->action('Reestablecer contraseña', url($url))
-                    ->line('Si no solicitó un restablecimiento de contraseña, no es necesario realizar ninguna otra acción.')
-                    ->line('Gracias.')
-                    ->salutation('Att: Apprevenir administración');
+                    ->markdown('mail.email-resetpassword', compact('url'));
     }
 
     /**

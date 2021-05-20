@@ -18,10 +18,10 @@ class CreateUsersTable extends Migration
             $table->foreignId('reference')->nullable()->constrained('users')->onDelete('set null');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
+            $table->string('password')->nullable();
             $table->enum('client', ['persona natural', 'entidades territoriales', 'secretarias de educacion', 'instituciones educativas', 'universidades', 'empresas'])->default('persona natural');
             $table->boolean('status')->default(1);
-            $table->string('code');
+            $table->string('code')->nullable();
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes('deleted_at', 0);
